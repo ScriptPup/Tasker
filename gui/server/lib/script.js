@@ -1,6 +1,5 @@
 // This module is used to run scripts from the db
 var settings = require('../resources/settings.json'),
-    $ = require('jQuery'),
     mClient = require('mongodb').MongoClient,
     spawn = require('child_process').spawn,
     queueTicker = null,
@@ -75,6 +74,7 @@ module.exports = {
             nSpawn.on("exit",function(){
                 if(!erred){
                     Self.statusUpdate(name,"Complete",function(){
+                        
                         if(onexit){ onexit(true); }
                     });     
                 } else { if(onexit){ onexit(false); } }
@@ -124,7 +124,7 @@ module.exports = {
             }  
         });        
     },
-    queue: function(name,queueTime,at,io){
+    queue: function(name,at,io){
         at = (at) ? at : "1990-01-01 8:00:00 AM";
         var Self = this,
             job = {"name":name,"added": moment().format("YYY-MM-DD hh:mm:ss A"),"when":at};
@@ -138,6 +138,7 @@ module.exports = {
                         io.of('/home').emit('update-script',name,{"status":"Failed to queue"});
                     } else {
                         Self.statusUpdate(name,"Queued");
+                        Self.startQueue(io);
                         io.of('/home').emit('update-script',name,{"status":"Queued"});
                     }                    
                     db.close();
@@ -169,6 +170,9 @@ module.exports = {
                 if(res){
                     script.test(name,null,function(){
                         script.get(name,function(ud){
+                            queueRunning--;
+                            script.unqueue(name);
+                            queueTick(io,script);
                             io.of('/home').emit('update-script',name,ud);
                         });
                     });
@@ -183,21 +187,17 @@ module.exports = {
         queueTick = function(io,script){
             if(queueRunning < queueMaxRunning){
                 script.getQueue(null,null,function(queued){
-                    if(queueRunning < queueMaxRunning){
-                        queueRunning++;
-                        queueRunActions(queued.name,io,script);
-                        script.unqueue(queued.name);
+                    if(queued){
+                        if(queueRunning < queueMaxRunning){
+                            queueRunning++;
+                            queueRunActions(queued.name,io,script);
+                            script.unqueue(queued.name);
+                        }
                     }
                 });
             }
         }
-        if(!queueStarted){ 
-            queueStarted = true;
-            queueTicker = setInterval(function(){ queueTick(io,Self); }, 30000);
-        } else { queueTick(io,script); }
-
-
-         
+        queueTick(io,Self);         
     }
 
 

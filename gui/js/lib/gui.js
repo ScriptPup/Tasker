@@ -68,7 +68,7 @@ define(['socketio'], function(io){
                     console.log("Updating script details");
                     Self.updateScript(sn,ud);
                 });
-                socket.emit('script');
+                socket.emit('script',null,window.location.pathname.split('/')[1]);
             }
             else {
                 console.log("Laying error");
@@ -92,7 +92,7 @@ define(['socketio'], function(io){
                 Self.loadPage();
             }
         },
-        layScript: function(script){
+        layScript_retire: function(script){
             var socket = $.grep(gSockets, function(e){ return e.nsp === "/home"; }),
                 crd = $(script),
                 pg = $('.main-body').append($("<div class='center-er'>").append(crd));

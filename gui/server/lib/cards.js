@@ -36,9 +36,12 @@ module.exports = {
         }, filt );
     },
     layScript: function(cb,permis,select){
+        console.log("Initial select "+select);
+        select = (select) ? select : "default";
+        console.log("Selecting Scripts "+select);
         var Self = this,
             send = null,
-            filt = {"web-part": "script", "access": { $in: ["public"] }};
+            filt = {"web-part": "script", "access": { $in: ["public"] },"group":select};
             if(permis!==null && permis !=="undefined"){ 
                 if(Array.isArray(permis)){
                     for(var i=0; i<permis.length; i++){ filt["access"]["$in"].push(permis[i]); } 
