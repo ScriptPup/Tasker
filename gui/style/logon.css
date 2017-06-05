@@ -1,0 +1,77 @@
+.logon-contain {
+    margin-top: 10px;
+    width: 383px;
+    min-width: 200px;
+    margin-left: auto;
+    margin-right: auto;
+    font-family: 'comfortaa';
+    font-size: large;
+}
+.login-form {
+    display: block;
+    position: relative;
+    text-align: left;
+}
+.login-form table {
+    table-layout: fixed;
+    width: 350px;
+}
+.login-form table tr td, .login-form table tr th {
+    width: 200px;    
+    text-align: left;
+}
+.login-form table tr:last-child td {
+    text-align: right;
+    padding-right: 28px;
+}
+.login-form table tbody tr th {
+    width: 100px;
+}
+td button:nth-child(1) {
+    margin-right: 10px;
+}
+td input {
+    border-color: rgba(175, 175, 175, 0.76);
+    border-radius: 4px;
+    font-size: large;
+    width: 200px;
+}
+td button {
+    border: none;    
+    border-radius: 3px;
+    padding: 5px;
+    font-size: large;
+    cursor: pointer;
+}
+td button:hover {
+    color: white;
+    background-color: rgba(173, 173, 173, 1);
+}
+#reg-err-msg {
+    color: red;
+    font-style: italic;
+}
+.summary {
+    width: 86%;
+}
+@media screen and (max-width: 368px){
+    .login-form table {
+      border-spacing: collapse;
+      width: 200px;
+    }
+    .login-form table tr td:not(.buttons), .login-form table tr th {
+        display: block;
+        padding: 0px;
+    }
+    .login-form table tr td.buttons{
+        text-align: left;
+        padding: 0px;
+    }
+    .logon-contain {
+        width: 200px;
+    }
+    .login-form {
+        min-width: 0px;
+        width: 200px;
+    }
+  }

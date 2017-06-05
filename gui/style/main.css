@@ -1,0 +1,110 @@
+body {
+    font-family: 'comfortaa';
+}
+.page-tile {
+  /*background: #fff;*/
+  /* Metal Background with fade */
+
+    background: -webkit-radial-gradient(center, circle farthest-corner, rgba(255,255,255,0) 50%, rgba(200,200,200,1)), -webkit-radial-gradient(center, circle, rgba(255,255,255,.35), rgba(255,255,255,0) 20%, rgba(255,255,255,0) 21%), -webkit-radial-gradient(center, circle, rgba(0,0,0,.2), rgba(0,0,0,0) 20%, rgba(0,0,0,0) 21%), -webkit-radial-gradient(center, circle farthest-corner, #f0f0f0, #c0c0c0);
+    background-size: 100% 100%, 10px 10px, 10px 10px, 100% 100%;
+    background-repeat: no-repeat, repeat, repeat, no-repeat;
+    background-position: top center, 1px 1px, 0px 0px, top center;
+    box-shadow: 0 0 10px rgba(0,0,0,0.3);
+    margin: 26px 15px 0;
+    min-height: 200px;
+    padding: 24px;
+    position: relative;
+    width: 30%;
+    min-width: 200px;
+    max-width: 350px;
+    display: inline-block;
+    text-align: initial;
+}
+.center-er {
+    text-align: center;
+}
+.page-tile:before, .page-tile:after {
+    content: "";
+    height: 100%;
+    position: absolute;
+    width: 100%;
+    z-index: -1;
+}
+.page-tile:hover {
+    transform: translate3d(-10px, 0px, 0px);
+    cursor: pointer;
+}
+.page-tile:before {
+    background: -webkit-radial-gradient(center, circle farthest-corner, rgba(255,255,255,0) 50%, rgba(200,200,200,1)), -webkit-radial-gradient(center, circle, rgba(255,255,255,.35), rgba(255,255,255,0) 20%, rgba(255,255,255,0) 21%), -webkit-radial-gradient(center, circle, rgba(0,0,0,.2), rgba(0,0,0,0) 20%, rgba(0,0,0,0) 21%), -webkit-radial-gradient(center, circle farthest-corner, #f0f0f0, #c0c0c0);
+    background-size: 100% 100%, 10px 10px, 10px 10px, 100% 100%;
+    background-repeat: no-repeat, repeat, repeat, no-repeat;
+    background-position: top center, 1px 1px, 0px 0px, top center;
+
+    box-shadow: 0 1 8px rgba(0,0,0,0.2);
+    left: 2px;
+    top: 0px;
+    transform: rotate(-0.8deg);
+}
+.page-tile:after {
+    background: -webkit-radial-gradient(center, circle farthest-corner, rgba(255,255,255,0) 50%, rgba(200,200,200,1)), -webkit-radial-gradient(center, circle, rgba(255,255,255,.35), rgba(255,255,255,0) 20%, rgba(255,255,255,0) 21%), -webkit-radial-gradient(center, circle, rgba(0,0,0,.2), rgba(0,0,0,0) 20%, rgba(0,0,0,0) 21%), -webkit-radial-gradient(center, circle farthest-corner, #f0f0f0, #c0c0c0);
+    background-size: 100% 100%, 10px 10px, 10px 10px, 100% 100%;
+    background-repeat: no-repeat, repeat, repeat, no-repeat;
+    background-position: top center, 1px 1px, 0px 0px, top center;
+
+    box-shadow: 0 0 1px rgba(0,0,0,0.5);
+    right: 9px;
+    top: 0px;
+    transform: rotate(2.8deg);
+}
+.page-tile * {
+    word-wrap: break-word;
+    overflow: hidden;
+}
+
+
+.page-content {
+  /*background: #fff;*/
+  /* Metal Background with fade */
+    background: -webkit-radial-gradient(center, circle farthest-corner, rgba(255,255,255,0) 50%, rgba(200,200,200,1)), -webkit-radial-gradient(center, circle, rgba(255,255,255,.35), rgba(255,255,255,0) 20%, rgba(255,255,255,0) 21%), -webkit-radial-gradient(center, circle, rgba(0,0,0,.2), rgba(0,0,0,0) 20%, rgba(0,0,0,0) 21%), -webkit-radial-gradient(center, circle farthest-corner, #f0f0f0, #c0c0c0);
+    background-size: 100% 100%, 10px 10px, 10px 10px, 100% 100%;
+    background-repeat: no-repeat, repeat, repeat, no-repeat;
+    background-position: top center, 1px 1px, 0px 0px, top center;
+    box-shadow: 0 0 10px rgba(0,0,0,0.3);
+    margin: 26px 15px 0;
+    min-height: 200px;
+    padding: 24px;
+    position: relative;
+    width: 30%;
+    min-width: 200px;
+    max-width: 350px;
+    display: inline-block;
+    text-align: initial;
+}
+.script-tile {
+    background: -webkit-radial-gradient(center, circle farthest-corner, rgba(255,255,255,0) 50%, rgba(200,200,200,1)), -webkit-radial-gradient(center, circle, rgba(255,255,255,.35), rgba(255,255,255,0) 20%, rgba(255,255,255,0) 21%), -webkit-radial-gradient(center, circle, rgba(0,0,0,.2), rgba(0,0,0,0) 20%, rgba(0,0,0,0) 21%), -webkit-radial-gradient(center, circle farthest-corner, #f0f0f0, #c0c0c0);
+    background-size: 100% 100%, 10px 10px, 10px 10px, 100% 100%;
+    background-repeat: no-repeat, repeat, repeat, no-repeat;
+    background-position: top center, 1px 1px, 0px 0px, top center;
+    box-shadow: 0 0 10px rgba(0,0,0,-0.3);
+    margin: 26px 15px 0;
+    min-height: 200px;
+    padding: 24px;
+    position: relative;
+    width: 30%;
+    min-width: 200px;
+    max-width: 350px;
+    display: inline-block;
+    text-align: initial;
+}
+.script-tile > h2 {
+    margin-top: 0px;
+    border-bottom: black 1px solid;
+}
+.script-last-run, .script-test-result, .script-status-result {
+    color: blue;
+    font-style: italic;
+}
+.script-tile:hover {
+    cursor: pointer;
+    box-shadow: 0 0 10px rgba(0,0,0,0.3);
+}

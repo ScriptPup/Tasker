@@ -1,0 +1,47 @@
+{
+  "name": "tasker",
+  "version": "1.0.0",
+  "description": "Tasker is used to manage scheduled and one-off script execution from the server",
+  "main": "index.js",
+  "scripts": {
+    "start": "node ./gui/server/index.js",
+    "test": "echo \"error, no test specified\"",
+    "lite": "lite-server --port 80 -c bs-config.json",
+    "dev": "concurrently --kill-others \"npm run lite\" \"npm run start\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ScriptPup/Tasker.git"
+  },
+  "keywords": [
+    "task",
+    "command",
+    "execution",
+    "host",
+    "powershell",
+    "script"
+  ],
+  "author": "Ethan Hammond",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ScriptPup/Tasker/issues"
+  },
+  "homepage": "https://github.com/ScriptPup/Tasker#readme",
+  "dependencies": {
+    "child_process": "^1.0.2",
+    "express": "^4.15.3",
+    "fs": "0.0.1-security",
+    "http": "0.0.0",
+    "jQuery": "^1.7.4",
+    "moment": "^2.18.1",
+    "mongodb": "^2.2.27",
+    "path": "^0.12.7",
+    "serve-static": "^1.12.3",
+    "smb2": "^0.2.7",
+    "socket.io": "^2.0.1"
+  },
+  "devDependencies": {
+    "concurrently": "^3.4.0",
+    "lite-server": "^2.3.0"
+  }
+}

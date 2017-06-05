@@ -1,0 +1,123 @@
+html {
+    width: 100%;
+    height: 100%;
+    background-image: url('/style/img/bg_gmesh.png');
+}
+body {
+    width: 100%;
+    height: 100%;    
+    margin: 0px;
+    padding: 0px;
+}
+.load {
+    display: none;
+}
+.loading {
+    position: relative;
+    right: 0;
+    left: 0;
+    bottom: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.3);
+    cursor: progress;
+}
+.loader {
+  border: 16px solid #f3f3f3;
+  border-radius: 50%;
+  border-top: 16px solid rgba(69, 19, 70, 0.8);
+  border-bottom: 16px solid rgba(69, 19, 70, 0.8);
+  width: 120px;
+  height: 120px;
+  -webkit-animation: spin 2s linear infinite;
+  animation: spin 2s linear infinite;
+
+  position: absolute;
+  top: 50%;
+  left: 50%;
+
+  margin: -60px 0 0 -60px;
+}
+.loader-title {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  margin: 120px 0 0 -110px;
+  font-size: x-large;
+}
+@-webkit-keyframes spin {
+  0% { -webkit-transform: rotate(0deg); }
+  100% { -webkit-transform: rotate(360deg); }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.main-banner {
+    position: absolute;
+    top: 0px;
+    margin-top: 0px;
+    width: 100%;
+    min-width: 220px;
+    height: 90px;
+    background-color: rgba(80, 147, 215, 0.78);
+    color: white;
+    text-align: center;
+    left: 0px;
+    right: 0px;
+}
+.main-banner h1 {
+    position: relative;
+    font-family: 'Beyond_the_Mountains';
+    margin-top: 10px;
+    margin-bottom: 8px;
+    margin-left: auto;
+    margin-right: auto;
+}
+.center-title {
+    position: relative;
+    width: 250px;
+    margin-left: auto;
+    margin-right: auto;
+    display: inline-block;
+}
+.main-banner .sub-title {
+    position: relative;
+    top: 0px;
+    font-size: small;
+    margin-top: 0px;
+    margin-bottom: 0px;
+    padding: 0px;
+    margin-left: 60px;
+}
+.login-link {
+    position: absolute;
+    right: 5px;
+    bottom: 5px;
+    font-size: small;
+    
+}
+.login-link a {
+    color: white;
+}
+.banner-spacer {
+    height: 100px;    
+}
+.icon {
+  position: absolute;
+  width: 64px;
+  height: 64px;
+  top: 10px;
+  display: inline-block;
+  left: 0px;
+  cursor: pointer;
+  background: url('/style/img/icon.png');
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+.icon:hover {
+  background-image: url('/style/img/icon-hover.png');
+}

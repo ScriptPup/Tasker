@@ -57,3 +57,5 @@ typings/
 # dotenv environment variables file
 .env
 
+# lite server config
+bs-config.json

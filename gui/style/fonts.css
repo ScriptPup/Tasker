@@ -1,0 +1,90 @@
+@font-face {
+  font-family: 'HelveticaNeue-Thin';
+  src: url('./fonts/Helvetica Neue Thin/HelveticaNeue-Thin.eot');
+  src: url('./fonts/Helvetica Neue Thin/HelveticaNeue-Thin.eot?#iefix') format('embedded-opentype'), 
+       url('./fonts/Helvetica Neue Thin/HelveticaNeue-Thin.woff2') format('woff2'), 
+       url('./fonts/Helvetica Neue Thin/HelveticaNeue-Thin.woff') format('woff'), 
+       url('./fonts/Helvetica Neue Thin/HelveticaNeue-Thin.ttf')  format('truetype'), 
+       url('./fonts/Helvetica Neue Thin/HelveticaNeue-Thin.svg#svgFontName') format('svg'); 
+}
+@font-face {
+  font-family: 'HelveticaNeueLTStd';
+  src: url('./fonts/Helvetica Neue/HelveticaNeueLTStd Lt.eot');
+  src: url('./fonts/Helvetica Neue/HelveticaNeueLTStd Lt.eot?#iefix') format('embedded-opentype'), 
+       url('./fonts/Helvetica Neue/HelveticaNeueLTStd Lt.woff2') format('woff2'), 
+       url('./fonts/Helvetica Neue/HelveticaNeueLTStd Lt.woff') format('woff'), 
+       url('./fonts/Helvetica Neue/HelveticaNeueLTStd Lt.ttf')  format('truetype'), 
+       url('./fonts/Helvetica Neue/HelveticaNeueLTStd Lt.svg#svgFontName') format('svg'); 
+}
+@font-face {
+  font-family: 'Alex-Brush';
+  src: url('./fonts/alex-brush/AlexBrush-Regular.eot');
+  src: url('./fonts/alex-brush/AlexBrush-Regular.eot?#iefix') format('embedded-opentype'), 
+       url('./fonts/alex-brush/AlexBrush-Regular.woff2') format('woff2'), 
+       url('./fonts/alex-brush/AlexBrush-Regular.woff') format('woff'), 
+       url('./fonts/alex-brush/AlexBrush-Regular.ttf')  format('truetype'), 
+       url('./fonts/alex-brush/AlexBrush-Regular.svg#svgFontName') format('svg'); 
+}
+@font-face {
+  font-family: 'Petit-Formal-Script';
+  src: url('./fonts/petit-formal-script/PetitFormalScript-Regular.eot');
+  src: url('./fonts/petit-formal-script/PetitFormalScript-Regular.eot?#iefix') format('embedded-opentype'), 
+       url('./fonts/petit-formal-script/PetitFormalScript-Regular.woff2') format('woff2'), 
+       url('./fonts/petit-formal-script/PetitFormalScript-Regular.woff') format('woff'), 
+       url('./fonts/petit-formal-script/PetitFormalScript-Regular.ttf')  format('truetype'), 
+       url('./fonts/petit-formal-script/PetitFormalScript-Regular.svg#svgFontName') format('svg'); 
+}
+@font-face {
+  font-family: 'comfortaa';
+  src: url('./fonts/comfortaa/Comfortaa-Regular.eot');
+  src: url('./fonts/comfortaa/Comfortaa-Regular.eot?#iefix') format('embedded-opentype'), 
+       url('./fonts/comfortaa/Comfortaa-Regular.woff2') format('woff2'), 
+       url('./fonts/comfortaa/Comfortaa-Regular.woff') format('woff'), 
+       url('./fonts/comfortaa/Comfortaa-Regular.ttf')  format('truetype'), 
+       url('./fonts/comfortaa/Comfortaa-Regular.svg#svgFontName') format('svg'); 
+}
+@font-face {
+  font-family: 'Medieval-Sharp';
+  src: url('./fonts/medievalsharp/MedievalSharp.eot');
+  src: url('./fonts/medievalsharp/MedievalSharp.eot?#iefix') format('embedded-opentype'), 
+       url('./fonts/medievalsharp/MedievalSharp.woff2') format('woff2'), 
+       url('./fonts/medievalsharp/MedievalSharp.woff') format('woff'), 
+       url('./fonts/medievalsharp/MedievalSharp.ttf')  format('truetype'), 
+       url('./fonts/medievalsharp/MedievalSharp.svg#svgFontName') format('svg'); 
+}
+@font-face {
+  font-family: 'Medieval-Sharp-BoldOblique';
+  src: url('./fonts/medievalsharp/MedievalSharp-BoldOblique.eot');
+  src: url('./fonts/medievalsharp/MedievalSharp-BoldOblique.eot?#iefix') format('embedded-opentype'), 
+       url('./fonts/medievalsharp/MedievalSharp-BoldOblique.woff2') format('woff2'), 
+       url('./fonts/medievalsharp/MedievalSharp-BoldOblique.woff') format('woff'), 
+       url('./fonts/medievalsharp/MedievalSharp-BoldOblique.ttf')  format('truetype'), 
+       url('./fonts/medievalsharp/MedievalSharp-BoldOblique.svg#svgFontName') format('svg'); 
+}
+@font-face {
+  font-family: 'Medieval-Sharp-Bold';
+  src: url('./fonts/medievalsharp/MedievalSharp-Bold.eot');
+  src: url('./fonts/medievalsharp/MedievalSharp-Bold.eot?#iefix') format('embedded-opentype'), 
+       url('./fonts/medievalsharp/MedievalSharp-Bold.woff2') format('woff2'), 
+       url('./fonts/medievalsharp/MedievalSharp-Bold.woff') format('woff'), 
+       url('./fonts/medievalsharp/MedievalSharp-Bold.ttf')  format('truetype'), 
+       url('./fonts/medievalsharp/MedievalSharp-Bold.svg#svgFontName') format('svg'); 
+}
+@font-face {
+  font-family: 'WildYouth-Regular';
+  src: url('./fonts/WildYouth-Regular/WildYouth-Regular.eot');
+  src: url('./fonts/WildYouth-Regular/WildYouth-Regular.eot?#iefix') format('embedded-opentype'), 
+       url('./fonts/WildYouth-Regular/WildYouth-Regular.woff2') format('woff2'), 
+       url('./fonts/WildYouth-Regular/WildYouth-Regular.woff') format('woff'), 
+       url('./fonts/WildYouth-Regular/WildYouth-Regular.ttf')  format('truetype'), 
+       url('./fonts/WildYouth-Regular/WildYouth-Regular.svg#svgFontName') format('svg'); 
+}
+@font-face {
+  font-family: 'Beyond_the_Mountains';
+  src: url('./fonts/BeyondTheMountains/BeyondTheMountains.eot');
+  src: url('./fonts/BeyondTheMountains/BeyondTheMountains.eot?#iefix') format('embedded-opentype'), 
+       url('./fonts/BeyondTheMountains/BeyondTheMountains.woff2') format('woff2'), 
+       url('./fonts/BeyondTheMountains/BeyondTheMountains.woff') format('woff'), 
+       url('./fonts/BeyondTheMountains/BeyondTheMountains.ttf')  format('truetype'), 
+       url('./fonts/BeyondTheMountains/BeyondTheMountains.svg#svgFontName') format('svg'); 
+}
