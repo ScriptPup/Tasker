@@ -11,7 +11,8 @@ var prt = process.env.PORT || 4432,
     staticBasePath = path.join(__dirname,'..','front-end',"http"),
     base = path.join(__dirname,'..','front-end',"http","index.html"),
     cards = require('./lib/cards.js'),
-    script = require('./lib/script.js');
+    script = require('./lib/script.js'),
+    auth = require('./lib/auth.js');
 
 app.use(serveStatic(staticBasePath, {'index': "index.html"}));
 var listen = http.listen(prt,function(){
@@ -27,8 +28,15 @@ io.on('connection', function(socket){
 
 });
 io.of('auth').on('connection',function(socket){
+    socket.on('register', function(creds){
+        auth.register(creds,function(success,msg){
+            socket.emit('register-resp',success,msg);
+        });
+    });
     socket.on('login', function(creds){
-
+        auth.login(creds,function(res,credMsg){
+            socket.emit('login-resp',res,credMsg);
+        });
     });
     socket.on('resume', function(creds){
 
@@ -42,22 +50,7 @@ io.of('home').on('connection', function(socket){
         },"card",null);
     });
     socket.on('run-script',function(name){
-        script.queue(name,null,io);        
-        /*script.run(name,ondata,function(res){
-            if(res){
-                script.test(name,null,function(){
-                    script.get(name,function(ud){
-                        io.of('/home').emit('update-script',name,ud);
-
-                    });
-                });
-            } else {
-                script.get(name,function(ud){
-                    io.of('/home').emit('update-script',name,ud);
-
-                });
-            }
-        });*/
+        script.queue(name,null,io);
     });
     socket.on('script',function(perms,select){
         console.log(perms + select);

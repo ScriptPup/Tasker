@@ -1,4 +1,4 @@
-define(['/logon/server_actions.js','text!/logon/register.html','/js/lib/is.min.js'], function (server,regTemp){
+define(['/logon/server_actions.js','text!/logon/register.html','text!/logon/register_success.html','text!/logon/login_success.html','/js/lib/is.min.js'], function (server,regTemp,reg_success_template,login_success_template){
     var regPerm = regTemp;  
     regTemp = $(regPerm);
     return {
@@ -9,7 +9,22 @@ define(['/logon/server_actions.js','text!/logon/register.html','/js/lib/is.min.j
                     username: $('#username').val(),
                     password: $('#password').val()
                 };
-                alert("Login pressed");
+                self.login(credentials,function(res,creds){
+                    if(!res){  
+                        $(ls).find('#login-message').html(creds);
+                        $(ls).dialog();                       
+                    }
+                    else { 
+                        if (typeof(Storage) !== "undefined") {
+                            var ls = $(login_success_template);
+                            $(ls).find('#login-message').html("You logged in successfully, your user rights will be applied on all pages. Please click the gear in the top left to go to the main page.");
+                            $(ls).dialog();
+                            localStorage.setItem("cred",JSON.stringify(creds));
+                        } else {
+                            alert("It looks like your browser doesn't support modern features. Please use an updated browser to login.");
+                        }                        
+                    }
+                });
             });
             $("#register").on('click',function(){
                 var credentials = {
@@ -20,8 +35,9 @@ define(['/logon/server_actions.js','text!/logon/register.html','/js/lib/is.min.j
             });
         },
         login: function(creds, cb) {
-            
-            
+            server.login(creds,function(res,creds){
+                cb(res,creds);
+            });            
         }, 
         registerForm: function(creds) {
             var self = this;
@@ -46,6 +62,9 @@ define(['/logon/server_actions.js','text!/logon/register.html','/js/lib/is.min.j
                                 if(res === true){
                                     dialog.dialog("close");
                                     dialog.find('form').off('keydown');
+                                        var um = $(reg_success_template);
+                                        $(um).find('#registration-message').html("User registration successful, you may now log in.");
+                                        $(um).dialog();
                                 }
                                 else {
                                     $('#reg-err-msg').html(res);
@@ -77,9 +96,7 @@ define(['/logon/server_actions.js','text!/logon/register.html','/js/lib/is.min.j
                 cb(valid);
             }
             else {
-                server.register(creds,function(res){
-                    console.log("Returned from server function");
-                    console.log(res);
+                server.register(creds,function(res,msg){
                     cb(res);
                 });
             }
