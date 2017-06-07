@@ -58,7 +58,7 @@ define(['socketio'], function(io){
                 socket.on('lay-card',function(card){
                     Self.layCard(card);
                 });
-                socket.emit('cards','req');
+                socket.emit('cards',muser);
             } else if(window.location.pathname.split('/').length === 2) {
                 console.log("Send request for scripts");
                 socket.on('lay-script', function(data){
@@ -68,7 +68,7 @@ define(['socketio'], function(io){
                     console.log("Updating script details");
                     Self.updateScript(sn,ud);
                 });
-                socket.emit('script',null,window.location.pathname.split('/')[1]);
+                socket.emit('script',muser,window.location.pathname.split('/')[1]);
             }
             else {
                 console.log("Laying error");
@@ -131,7 +131,7 @@ define(['socketio'], function(io){
                          template.on('click',function(e){
                                         //$(e.currentTarget).find(".script-test-result").html("Running...");
                                         var socket = $.grep(gSockets, function(e){ return e.nsp === "/home"; })[0];
-                                        socket.emit('run-script', e.currentTarget.id);
+                                        socket.emit('run-script', e.currentTarget.id,muser);
                                     });
                          $('.main-body').append($("<div class='center-er'>").append(template));
                     });

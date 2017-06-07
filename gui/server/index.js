@@ -44,23 +44,21 @@ io.of('auth').on('connection',function(socket){
 });
 io.of('home').on('connection', function(socket){
     // Maybe add some logging about connections?
-    socket.on('cards', function(opts){
-        cards.layCard(function(card,opts){
+    socket.on('cards', function(usr){
+        cards.layCard(function(card){
             socket.emit('lay-card',card);
-        },"card",null);
+        },"card",usr);
     });
-    socket.on('run-script',function(name){
-        script.queue(name,null,io);
+    socket.on('run-script',function(name,muser){
+        script.queue(name,muser,null,io);
     });
-    socket.on('script',function(perms,select){
-        console.log(perms + select);
-        cards.layScript(function(card){
-            
+    socket.on('script',function(muser,select){
+        cards.layScript(function(card){            
             script.get(card.name,function(ud){
                 socket.emit('update-script',card.name,ud);
             });
             socket.emit('lay-script',card);
-        },perms,select);
+        },muser,select);
     });
     socket.on('content',function(title){
         cards.layContent(title, function(content){

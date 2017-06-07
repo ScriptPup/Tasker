@@ -1,3 +1,4 @@
 {
-    "db_path": "mongodb://TaskerWeb:GetYourTaskOnYouPeasants@db.collaborwrite.net:9982/Tasker"
+    "db_path": "mongodb://TaskerWeb:GetYourTaskOnYouPeasants@db.collaborwrite.net:9982/Tasker",
+    "cookie_duration_days": 7
 }

@@ -1,5 +1,6 @@
 // This module is used to run scripts from the db
 var settings = require('../resources/settings.json'),
+    auth = require('./auth.js'),
     mClient = require('mongodb').MongoClient,
     spawn = require('child_process').spawn,
     queueTicker = null,
@@ -45,7 +46,7 @@ module.exports = {
             if(err){ console.error("Error connecting to database for scripts.get: " + err); }
             else {
                 var scripts = db.collection('scripts');
-                scripts.update({"name":name},{$set: {"status": nStat, "last-run": moment().format("YYYY-MM-DD hh:mm:ss A")}},function(err,res){
+                scripts.update({"name":name},{$set: {"status": nStat, "last-run": moment().toDate()}},function(err,res){
                     if(err){ console.error("Failed to update status: "+err); }
                     if(cb){ cb(); }
                 });
@@ -92,7 +93,7 @@ module.exports = {
             args = args.concat(inf.args.split(" "));
             var nSpawn = spawn(inf.run,args);
             nSpawn.stdout.on("data",function(data){
-                var ud = {"test.status": data.toString(), "test.last-run": moment().format("YYYY-MM-DD hh:mm:ss A")};
+                var ud = {"test.status": data.toString(), "test.last-run": moment().toDate()};
                 Self.update("scripts",name,ud,function(){                    
                     if(ondata){ ondata(data); }
                 });                
@@ -124,25 +125,37 @@ module.exports = {
             }  
         });        
     },
-    queue: function(name,at,io){
+    queue: function(name,muser,at,io){
         at = (at) ? at : "1990-01-01 8:00:00 AM";
         var Self = this,
             job = {"name":name,"added": moment().format("YYY-MM-DD hh:mm:ss A"),"when":at};
         mClient.connect(settings.db_path, function(err, db){
             if(err){ console.error("Error connecting to database for queue.send: " + err); }
             else {
-                var queue = db.collection("queue");
-                queue.insertOne(job, function(err,res){
-                    if(err){
-                        Self.statusUpdate(name,"Failed to queue");
-                        io.of('/home').emit('update-script',name,{"status":"Failed to queue"});
-                    } else {
-                        Self.statusUpdate(name,"Queued");
-                        Self.startQueue(io);
-                        io.of('/home').emit('update-script',name,{"status":"Queued"});
-                    }                    
-                    db.close();
-                });                
+                var scripts = db.collection("scripts"),
+                    queue = db.collection("queue");
+                auth.verify(muser,function(usr){   
+                    permis = usr.access;                         
+                    if(permis!==null && permis !=="undefined"){ 
+                        if(Array.isArray(permis)){ 
+                            permis.push("public");
+                        } else { permis = [permis,"public"]; }
+                    }
+                    scripts.findOne({"name":name,"access":{$in: permis}},function(err,doc){
+                        if(!doc){ Self.statusUpdate(name,"Failed to queue - Access Denied"); db.close(); return; }                    
+                        queue.insertOne(job, function(err,res){
+                            if(err){
+                                Self.statusUpdate(name,"Failed to queue");
+                                io.of('/home').emit('update-script',name,{"status":"Failed to queue"});
+                            } else {
+                                Self.statusUpdate(name,"Queued");
+                                Self.startQueue(io);
+                                io.of('/home').emit('update-script',name,{"status":"Queued"});
+                            }                    
+                            db.close();
+                        });      
+                    });   
+                });       
             }
         });     
     },

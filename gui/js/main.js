@@ -1,3 +1,4 @@
+muser = (localStorage.getItem("cred")) ? JSON.parse(localStorage.getItem("cred")) : null;
 gSockets = [];
 requirejs.config({
     baseUrl: '/js/lib',

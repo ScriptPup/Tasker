@@ -1,8 +1,10 @@
 var settings = require('../resources/settings.json'),
+    cookie_duration_days = settings.cookie_duration_days,
     mClient = require('mongodb').MongoClient,
     password = require('password-hash'),
     rstring = require('randomstring'),
-    is = require('is_js');
+    is = require('is_js'),
+    moment = require('moment');
 
 var validateRegister = function(creds){
     credsG=creds;
@@ -51,10 +53,11 @@ module.exports = {
                     auth.findOne({$or: [{"username":creds.username},{"email":creds.username}] }, function(err, doc){
                         if(doc){
                             var pwVer = password.verify(creds.password,doc.password),
-                                cookie_hash = rstring.generate(64);
+                                cookie_hash = rstring.generate(64),
+                                expires = moment().day(cookie_duration_days).toDate();
                             if(pwVer){
-                                auth.update({"username": creds.username},{$push:{ "cookies": cookie_hash }},function(err,res){
-                                    cb(true,{"username": creds.username,"cookie": cookie_hash}); 
+                                auth.update({"username": creds.username},{$push:{ "cookies": {"hash": cookie_hash, "expires": expires} }},function(err,res){
+                                    cb(true,{"username": creds.username,"cookie":{"hash": cookie_hash, "expires": expires}}); 
                                     db.close();
                                 });                                
                             }
@@ -66,6 +69,28 @@ module.exports = {
                     });
                 }
             });
+    },
+    verify: function(muser,cb){
+        if(!muser){ cb(false); return; }
+        if(!muser.hasOwnProperty("username")){ cb(false); return; }
+        if(!muser.hasOwnProperty("cookie")){ cb(calse); return; }
+        if(!muser.cookie.hasOwnProperty("hash")){ cb(false); return; }
+        var username = muser.username,
+            cookie = muser.cookie.hash;
+        if(!Array.isArray(cookie)){ cookie = [cookie]; }
+        mClient.connect(settings.db_path, function(err, db){
+            if(err){ console.error("Error connecting to database for auth.verify: " + err); db.close(); }
+            else {
+                var auth = db.collection("auth"),
+                    findME = {"username":muser.username,"cookies.hash": {$in: cookie},"cookies.expires": {$gte: new Date()}};
+                auth.findOne(findME, function(err, doc){
+                    if(doc){
+                        if(cb){ cb(doc); } 
+                    } else { if(cb){ cb(false); } }                                       
+                    db.close();
+                });
+            }
+        });
     }
 
 }
