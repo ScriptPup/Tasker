@@ -7,7 +7,6 @@ var settings = require('../resources/settings.json'),
 module.exports = {
     draw: function(cb,filter){        
         var filt = (filter!==null) ? filter : {"web-part": "card", "access": { "$in": ["public"] }};
-        console.log(filt);
         mClient.connect(settings.db_path, function(err, db){
             if(err){ console.error("Error connecting to database for cards.draw: " + err); }
             else {
@@ -76,7 +75,6 @@ module.exports = {
         });
     },
     layContent: function(title,cb){
-        console.log("Content-lay requested " + title);
         var Self = this,
             send = null;
         this.content(title,function(content){

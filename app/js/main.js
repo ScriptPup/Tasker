@@ -34,7 +34,8 @@ requirejs(
             load.page_loaded();
         });
         require(
-            ['/js/lib/gui.js'],function(gui){
+            ['/js/lib/gui.js','/js/lib/contextmenu.js'],function(gui,cm){
                 gui.loadPage();
+                cm.init();
             });
     });

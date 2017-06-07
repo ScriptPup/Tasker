@@ -108,3 +108,11 @@ body {
     cursor: pointer;
     box-shadow: 0 0 10px rgba(0,0,0,0.3);
 }
+ul.ui-menu {
+    border-radius: 3px;
+    padding: 5px;
+}
+.ui-menu-item:hover {
+    box-shadow: 0 0 5px rgba(0,0,0,.2);
+    background: rgba(0,0,0,.2);
+}

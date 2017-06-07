@@ -5,11 +5,11 @@ requirejs.config({
         }
     },
     paths: {
-        socketio: '/js/lib/socket.io/dist/socket.io.slim'
+        socketio: '/js/lib/socket.io/dist/socket.io.slim',
+        moment: '/js/lib/moment'
     }
 });
-
-define(['socketio'], function(io){
+define(['socketio','moment'], function(io,moment){
     var UpdateQueryString = function(key, value, url) {
         if (!url) url = window.location.href;
         var re = new RegExp("([?&])" + key + "=.*?(&|#|$)(.*)", "gi"),
@@ -99,9 +99,12 @@ define(['socketio'], function(io){
                 socket.on('script-refresh', function(update,n){
                     $('#'+update).html(n);
                 });
+                /*
                 crd.on('click',function(e){
-                    socket.emit('script',$(e.target).attr('id'));
+
+                    //socket.emit('script',$(e.target).attr('id'));
                 });
+                */
         },
         layCard: function(card){
             var crd = $(card);
@@ -112,7 +115,7 @@ define(['socketio'], function(io){
                 });
         },
         updateScript: function(script,ud){
-            if(ud.hasOwnProperty("last-run")){ $("#"+script).find(".script-last-run").html(ud["last-run"]); }
+            if(ud.hasOwnProperty("last-run")){ $("#"+script).find(".script-last-run").html(moment(ud["last-run"]).format("MM/DD/YYYY hh:mm:ss A")); }
             if(ud.hasOwnProperty("status")){ $("#"+script).find(".script-status-result").html(ud.status); }
             if(ud.hasOwnProperty("test")){
                 if(ud.test.hasOwnProperty("status")){ $("#"+script).find(".script-test-result").html(ud.test.status); }
@@ -126,15 +129,10 @@ define(['socketio'], function(io){
                          template.attr("id",script.name);
                          template.find(".script-title").html(script.title);
                          template.find(".script-note").html(script.note);
-                         template.find(".script-last-run").html(script["last-run"]);
+                         template.find(".script-last-run").html(moment(script["last-run"]).format("MM/DD/YYYY hh:mm:ss A"));
                          template.find(".script-test-result").html(script.status);
-                         template.on('click',function(e){
-                                        //$(e.currentTarget).find(".script-test-result").html("Running...");
-                                        var socket = $.grep(gSockets, function(e){ return e.nsp === "/home"; })[0];
-                                        socket.emit('run-script', e.currentTarget.id,muser);
-                                    });
                          $('.main-body').append($("<div class='center-er'>").append(template));
                     });
-        }
+        }        
     }
 });

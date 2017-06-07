@@ -50,6 +50,9 @@ io.of('home').on('connection', function(socket){
         },"card",usr);
     });
     socket.on('run-script',function(name,muser){
+        console.log("Recieved request to run script...");
+        console.log(name);
+        console.log(muser);
         script.queue(name,muser,null,io);
     });
     socket.on('script',function(muser,select){
