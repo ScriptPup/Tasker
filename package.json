@@ -4,7 +4,7 @@
   "description": "Tasker is used to manage scheduled and one-off script execution from the server",
   "main": "index.js",
   "scripts": {
-    "start": "node ./gui/server/index.js",
+    "start": "node ./server/index.js",
     "test": "echo \"error, no test specified\"",
     "lite": "lite-server --port 80 -c bs-config.json",
     "dev": "concurrently --kill-others \"npm run lite\" \"npm run start\""
