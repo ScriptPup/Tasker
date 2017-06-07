@@ -141,7 +141,6 @@ module.exports = {
                             permis.push("public");
                         } else { permis = [permis,"public"]; }
                     }
-                    console.log("Verifying user rights...");
                     scripts.findOne({"name":name,"access":{$in: permis}},function(err,doc){
                         if(!doc){ Self.statusUpdate(name,"Failed to queue - Access Denied"); db.close(); return; }                    
                         queue.insertOne(job, function(err,res){
