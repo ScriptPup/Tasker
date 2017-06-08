@@ -49,14 +49,15 @@ module.exports = {
             mClient.connect(settings.db_path, function(err, db){
                 if(err){ console.error("Error connecting to database for auth.login: " + err); }
                 else {
-                    var auth = db.collection("auth");
+                    var auth = db.collection("auth"),
+                        cook = db.collection("cookies");
                     auth.findOne({$or: [{"username":creds.username},{"email":creds.username}] }, function(err, doc){
                         if(doc){
                             var pwVer = password.verify(creds.password,doc.password),
                                 cookie_hash = rstring.generate(64),
                                 expires = moment().day(cookie_duration_days).toDate();
                             if(pwVer){
-                                auth.update({"username": creds.username},{$push:{ "cookies": {"hash": cookie_hash, "expires": expires} }},function(err,res){
+                                cook.update({"username": creds.username},{$push:{ "cookies": {"hash": cookie_hash, "expires": expires} }},{upsert: true},function(err,res){
                                     cb(true,{"username": creds.username,"cookie":{"hash": cookie_hash, "expires": expires}}); 
                                     db.close();
                                 });                                
@@ -82,12 +83,16 @@ module.exports = {
             if(err){ console.error("Error connecting to database for auth.verify: " + err); db.close(); }
             else {
                 var auth = db.collection("auth"),
+                    cook = db.collection("cookies"),
                     findME = {"username":muser.username,"cookies.hash": {$in: cookie},"cookies.expires": {$gte: new Date()}};
-                auth.findOne(findME, function(err, doc){
-                    if(doc){
-                        if(cb){ cb(doc); } 
-                    } else { if(cb){ cb(false); } }                                       
-                    db.close();
+                cook.findOne(findME, function(err, doc1){
+                    if(!doc1){ cb(false); db.close(); return; }
+                    auth.findOne({"username": muser.username},function(err,doc){
+                        if(doc){
+                            if(cb){ cb(doc); } 
+                        } else { if(cb){ cb(false); } }                                       
+                        db.close();
+                    });
                 });
             }
         });

@@ -10,6 +10,8 @@ requirejs.config({
     }
 });
 define(['socketio','moment'], function(io,moment){
+    // User logged in? If so, make it obvious!
+    if(typeof muser !== 'undefined'){ if(muser){ $('#loginer').html("<a href='/logon/index.html'>Welcome, "+muser.username+"</a>"); } }
     var UpdateQueryString = function(key, value, url) {
         if (!url) url = window.location.href;
         var re = new RegExp("([?&])" + key + "=.*?(&|#|$)(.*)", "gi"),

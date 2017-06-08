@@ -17,8 +17,8 @@ define(['/logon/server_actions.js','text!/logon/register.html','text!/logon/regi
                     else { 
                         if (typeof(Storage) !== "undefined") {
                             var ls = $(login_success_template);
-                            $(ls).find('#login-message').html("You logged in successfully, your user rights will be applied on all pages. Please click the gear in the top left to go to the main page.");
-                            $(ls).dialog();
+                            $(ls).find('#login-message').html("You logged in successfully, your user rights will be applied on all pages. Please close this dialog to continue.");
+                            $(ls).dialog({close: function(){ window.location.href = "/"}});
                             localStorage.setItem("cred",JSON.stringify(creds));
                         } else {
                             alert("It looks like your browser doesn't support modern features. Please use an updated browser to login.");
