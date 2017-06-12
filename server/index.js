@@ -12,7 +12,9 @@ var prt = process.env.PORT || 4432,
     base = path.join(__dirname,'..',"app","index.html"),
     cards = require('./lib/cards.js'),
     script = require('./lib/script.js'),
-    auth = require('./lib/auth.js');
+    auth = require('./lib/auth.js'),
+    logging = require('./lib/logging.js'),
+    results = require('./lib/results.js');
 
 app.use(serveStatic(staticBasePath, {'index': "index.html"}));
 var listen = http.listen(prt,function(){
@@ -37,9 +39,6 @@ io.of('auth').on('connection',function(socket){
         auth.login(creds,function(res,credMsg){
             socket.emit('login-resp',res,credMsg);
         });
-    });
-    socket.on('resume', function(creds){
-
     });
 });
 io.of('home').on('connection', function(socket){
@@ -66,3 +65,5 @@ io.of('home').on('connection', function(socket){
         });
     });
 });
+logging.init(io);
+results.init(io);

@@ -46,7 +46,7 @@ module.exports = {
         var Self = this,
             send = null,
             filt = {"web-part": "script", "access": { $in: ["public"] },"group":select};
-            auth.verify(muser,function(usr){   
+            auth.verify(muser,function(usr){
                 permis = usr.access;                         
                 if(permis!==null && permis !=="undefined"){ 
                     if(Array.isArray(permis)){                        
@@ -77,7 +77,7 @@ module.exports = {
     layContent: function(title,cb){
         var Self = this,
             send = null;
-        this.content(title,function(content){
+        Self.content(title,function(content){
             send = "<div class='center-er'><div class='page-content' id='"+content.name+"'><h2>"+content.title+"</h2>"+content.data+"</div></div>";
             cb(send);
         });

@@ -1,0 +1,17 @@
+.log-time {
+    color: blue;
+}
+.log-message {
+    margin-left: 15px;
+}
+.page-content {
+    width: 80%;
+    min-width: 600px;
+    height: 80%;
+    background: beige;
+    margin-left: auto;
+    margin-right: auto;
+}
+.main-body {
+    text-align: center;
+}

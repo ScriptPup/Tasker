@@ -1,4 +1,4 @@
-define(['/js/lib/jquery-ui/jquery.ui-contextmenu.min.js'],function(){
+define(['/js/lib/jquery-ui/jquery.ui-contextmenu.min.js','/js/lib/gui.js'],function(a,gui){
 var scriptActions = {
     runScript: function(event, ui){
         if (ui.target.hasClass('script-tile')) {
@@ -6,16 +6,25 @@ var scriptActions = {
 		} else {
 			var tar = $(ui.target).parents('.script-tile');
 		}
-        console.log(ui.target);
         var socket = $.grep(gSockets, function(e){ return e.nsp === "/home"; })[0];
         socket.emit('run-script', $(tar).attr('id'),muser);
-        console.log('Running...');
+        console.log('Running script '+ $(tar).attr('id'));
     },
     viewScriptResults: function(event,ui){
-        
+        if (ui.target.hasClass('script-tile')) {
+			var tar = $(ui.target)
+		} else {
+			var tar = $(ui.target).parents('.script-tile');
+		}
+        gui.navigate("/results/?script="+$(tar).attr('id'),false,true);
     },
     viewScriptLogs: function(event,ui){
-
+                if (ui.target.hasClass('script-tile')) {
+			var tar = $(ui.target)
+		} else {
+			var tar = $(ui.target).parents('.script-tile');
+		}
+        gui.navigate("/logs/?script="+$(tar).attr('id'),false,true);
     }
 }
 
@@ -28,7 +37,7 @@ var scriptContext = [
 
 var contextMenu = {
     delegate: ".script-tile",
-    trigger: "left-click",
+    trigger: "left",
     autoFocus: true,
     preventContextMenuForPopup: true,
     preventSelect: true,

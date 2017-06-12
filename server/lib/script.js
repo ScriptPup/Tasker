@@ -4,10 +4,13 @@ var settings = require('../resources/settings.json'),
     mClient = require('mongodb').MongoClient,
     spawn = require('child_process').spawn,
     queueTicker = null,
+    queueTickInterval = (5*60*1000),
     queueStarted = false,
     queueRunning = 0,
     queueMaxRunning = 10,
-    moment = require('moment');
+    moment = require('moment'),
+    results = require('./results.js'),
+    logging = require('./logging.js');
 
 module.exports = {
     get: function(name,cb){
@@ -148,6 +151,7 @@ module.exports = {
                                 Self.statusUpdate(name,"Failed to queue");
                                 io.of('/home').emit('update-script',name,{"status":"Failed to queue"});
                             } else {
+                                logging.add(name,"Script queued by "+usr.username,io);
                                 Self.statusUpdate(name,"Queued");
                                 Self.startQueue(io);
                                 io.of('/home').emit('update-script',name,{"status":"Queued"});
@@ -159,7 +163,8 @@ module.exports = {
             }
         });     
     },
-    unqueue: function(name){
+    unqueue: function(name,io){
+        //console.log(io);
         var Self = this,
             filter = {"name":name};
         mClient.connect(settings.db_path, function(err, db){
@@ -169,7 +174,7 @@ module.exports = {
                 queue.remove(filter, function(err,res){
                     if(err){
                         console.error("Failed to remove document from queue");
-                    }                
+                    } else { logging.add(name,"Script removed from queue by system.",io); }               
                     db.close();
                 });                
             }
@@ -178,14 +183,15 @@ module.exports = {
     startQueue: function(io){
         var Self = this,       
         queueRunActions = function(name,io,script){
+            gio = io;
             io.of('/home').emit('update-script',name,{"status":"Running...","last-run": "Now"});
             script.run(name,null,function(res){
                 if(res){
                     script.test(name,null,function(){
                         script.get(name,function(ud){
-                            queueRunning--;
-                            script.unqueue(name);
-                            queueTick(io,script);
+                            queueRunning--;                            
+                            script.unqueue(name,io);
+                            queueTick(io,script);                            
                             io.of('/home').emit('update-script',name,ud);
                         });
                     });
@@ -204,13 +210,19 @@ module.exports = {
                         if(queueRunning < queueMaxRunning){
                             queueRunning++;
                             queueRunActions(queued.name,io,script);
-                            script.unqueue(queued.name);
+                            logging.add(queued.name,"Queued script started.",io);
                         }
                     }
                 });
             }
         }
-        queueTick(io,Self);         
+        queueTick(io,Self);
+        if(!queueStarted){
+            queueStarted = true;
+            queueTicker = setInterval(function(){
+                queueTick(io,Self);
+            }, queueTickInterval)
+        }
     }
 
 

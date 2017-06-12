@@ -54,6 +54,11 @@ define(['socketio','moment'], function(io,moment){
             var socketHost = (window.location.origin.includes("localhost")) ? "http://localhost:4432"  : ""
                 socket = io.connect(socketHost+"/home");
             gSockets.push(socket);
+            socket.on('verify-fail',function(){
+                muser = null;
+                localStorage.removeItem('cred');
+                $('.login-link a').html("Login/Register");
+            });
             // Only request cards if the path is root and no search pattern is present
             if((window.location.pathname === "/" || window.location.pathname === "index.html")){
                 console.log("Laying cards");
@@ -72,6 +77,35 @@ define(['socketio','moment'], function(io,moment){
                 });
                 socket.emit('script',muser,window.location.pathname.split('/')[1]);
             }
+            else if(window.location.pathname.split('/').length === 3){
+                // More complex than required -- Maybe if expanded will go this route
+                /*
+                socket.on('lay-content',function(data,lscripts){
+                    var h = (document.body.scrollHeight*0.78);
+                    console.log("Laying content");
+                    $('.main-body').append(data);
+                    $('.center-er, .page-content').css('min-height',h);
+                    if(lscripts){
+                         for(var i=0; i<lscripts.length; i++){
+                            requirejs('/js/lib/'+lscripts[i]);
+                        }
+                    }
+                });
+                socket.emit('content',muser,window.location.pathname.split('/')[1]);
+                */
+                require(['text!/content/'+window.location.pathname.split('/')[1]+".html"],function(data){
+                    if(data){
+                        var h = (document.body.scrollHeight*0.78);
+                        $('.main-body').append(data);
+                        $('.center-er, .page-content').css('min-height',h);                 
+                    }
+                    else {
+                        requirejs(['text!/404_err_static.html'],function(data){
+                            $('.main-body').append(data);
+                        });
+                    }
+                });
+            }
             else {
                 console.log("Laying error");
                 requirejs(['text!/404_err_static.html'],function(data){
@@ -82,9 +116,10 @@ define(['socketio','moment'], function(io,moment){
                 console.log(msg);
             });
         },
-        navigate: function(link,fullpage){
+        navigate: function(link,fullpage,npage){
             var Self = this;
             if(fullpage){ window.location.href = link; }
+            else if(npage){ window.open(link, '_blank') }
             else {
                 // Disconnect sockets
                 for(var i=0; i < gSockets.length; i++){
@@ -133,6 +168,9 @@ define(['socketio','moment'], function(io,moment){
                          template.find(".script-note").html(script.note);
                          template.find(".script-last-run").html(moment(script["last-run"]).format("MM/DD/YYYY hh:mm:ss A"));
                          template.find(".script-test-result").html(script.status);
+                         template.on('click',function(e){
+                            $(document).contextmenu('open',$(e.target));
+                         });
                          $('.main-body').append($("<div class='center-er'>").append(template));
                     });
         }        
