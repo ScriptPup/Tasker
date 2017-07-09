@@ -1,3 +1,8 @@
 // Place your settings in this file to overwrite default and user settings.
 {
+    "window.zoomLevel": 0,
+    "workbench.activityBar.visible": true,
+    "editor.minimap.enabled": false,
+    "window.menuBarVisibility": "default",
+    "git.enableSmartCommit": true
 }

@@ -1,7 +1,13 @@
 var settings = require('../resources/settings.json'),
     cookie_duration_days = settings.cookie_duration_days,
     mClient = require('mongodb').MongoClient,
-    moment = require('moment');
+    moment = require('moment'),
+    resultsDB = null;
+
+mClient.connect(settings.db_path, function(err, db){
+    if(err){ console.error("Error connecting to database for results: " + err); }
+    resultsDB = db.collection('results');
+});
 
 module.exports = {
     init: function(io){
@@ -14,38 +20,28 @@ module.exports = {
             });
         });
     },
-    add: function(script,data){
-        mClient.connect(settings.db_path, function(err, db){
-            if(err){ console.error("Error connecting to database for results.add: " + err); db.close(); return; }
-            else {
-                var results = db.collection('results'),
-                    nres = {
-                        'date': moment().toDate(),
-                        'script': script,
-                        'data': data
-                    };
-                results.insert(nres,function(err, res){
-                    if(err){ console.error("Error inserting to database for results.add: " + err); }
-                    db.close();
-                });
-            }          
-        });
+    add: function(script,data,io){
+        if(!resultsDB){ console.error("logDB not connected yet."); return; }
+        var Self = this;     
+                nresults = {
+                    'date': moment().toDate(),
+                    'script': script,
+                    'data': data
+                };
+            resultsDB.insert(nresults,function(err, res){
+                if(err){ console.error("Error inserting to database for results.add: " + err); }
+                Self.sendAll(script,nresults,io);
+            });
     },
     pull: function(script,cb){
-        mClient.connect(settings.db_path, function(err, db){
-            if(err){ console.error("Error connecting to database for results.pull: " + err); }
-            else {
-                var filt = {"script": script},
-                    results = db.collection('results');
-                results.find(filt).each(function(err, doc){
-                    if(err){ console.error("Error querying for results.pull: " + err); }
-                    else if(doc) {
-                        cb(doc);
-                    }
-                    db.close();
-                });
+        if(!resultsDB){ console.error("logDB not connected yet."); return; }
+        var filt = {"script": script};
+        resultsDB.find(filt).each(function(err, doc){
+            if(err){ console.error("Error querying for results.pull: " + err); }
+            else if(doc) {
+                cb(doc);
             }
-        });
+        });            
     },
     send: function(script,socket){
         var Self = this;
@@ -53,7 +49,8 @@ module.exports = {
             socket.emit('results',doc);
         });
     },
-    sendAll: function(script,doc){
+    sendAll: function(script,doc,io){
+        //console.results(doc); console.results((io) ? true : false);
         io.of('results').in(script).emit('results',doc);
     }
 }

@@ -10,9 +10,13 @@ var settings = require('../resources/settings.json'),
     queueMaxRunning = 10,
     moment = require('moment'),
     results = require('./results.js'),
-    logging = require('./logging.js');
+    logging = require('./logging.js'),
+    gIO=null;
 
 module.exports = {
+    setIO: function(io){
+        gIO = io;
+    },
     get: function(name,cb){
         var filt = {"name":name };
         mClient.connect(settings.db_path, function(err, db){
@@ -68,26 +72,33 @@ module.exports = {
             nSpawn.stdout.on("data",function(data){
                 if(ondata){ ondata(data); }
             });
+            nSpawn.stdout.on("data",function(data){
+                results.add(name,data.toString(),gIO);
+            });
             nSpawn.stderr.on("data",function(data){
                 erred = true;
                 Self.statusUpdate(name,"Error, check script",function(){
                        
-                    });  
+                });
+                logging.add(name,"Script error: "+data.toString(),gIO);
                 console.error(data.toString());
             });
             nSpawn.on("exit",function(){
-                if(!erred){
+                if(!erred){               
                     Self.statusUpdate(name,"Complete",function(){
-                        
+                        logging.add(name,"Script completed successfully",gIO);
                         if(onexit){ onexit(true); }
                     });     
-                } else { if(onexit){ onexit(false); } }
+                } else { 
+                    if(onexit){ onexit(false); logging.add(name,"Script failed to exit properly",gIO); }                
+                }
             });
             nSpawn.stdin.end(); //end input
             Self.statusUpdate(name,"Running");
         });
     },
     test: function(name,ondata,onexit){
+        logging.add(name,"Script test started",gIO);
         var Self = this;
         Self.get(name,function(inf){
             inf = inf.test;
@@ -106,7 +117,8 @@ module.exports = {
                 console.error(data.toString());
             });
             nSpawn.on("exit",function(){
-                if(onexit){ onexit(true); }
+                logging.add(name,"Script test completed successfully",gIO);
+                if(onexit){ onexit(true); } else { logging.add(name,"Script test failed",gIO); }
             });
             nSpawn.stdin.end(); //end input
         });
@@ -185,12 +197,12 @@ module.exports = {
         queueRunActions = function(name,io,script){
             gio = io;
             io.of('/home').emit('update-script',name,{"status":"Running...","last-run": "Now"});
+            script.unqueue(name,io);
+            queueRunning--;
             script.run(name,null,function(res){
                 if(res){
                     script.test(name,null,function(){
-                        script.get(name,function(ud){
-                            queueRunning--;                            
-                            script.unqueue(name,io);
+                        script.get(name,function(ud){                            
                             queueTick(io,script);                            
                             io.of('/home').emit('update-script',name,ud);
                         });

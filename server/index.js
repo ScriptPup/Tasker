@@ -16,6 +16,8 @@ var prt = process.env.PORT || 4432,
     logging = require('./lib/logging.js'),
     results = require('./lib/results.js');
 
+script.setIO(io);
+
 app.use(serveStatic(staticBasePath, {'index': "index.html"}));
 var listen = http.listen(prt,function(){
     console.log("Listening on port:"+listen.address().port);
