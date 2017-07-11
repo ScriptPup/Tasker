@@ -1,0 +1,49 @@
+<div id="add-script" title="Add Script">
+    <form name="addScript" id="addScript">
+        <table>
+            <tbody>
+                <tr>
+                    <th>Script Name</th>
+                    <td><input type="text" name="name" id="name"/></td>
+                </tr>
+                <tr>
+                    <th>Script Type</th>
+                    <td>
+                        <select>
+                            <option value="powershell.exe">Powershell</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <th>Script Group</th>
+                    <td>
+                        <select name="script-group" id="script-group">
+                            
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <th>Access Groups</th>
+                    <td><input type="text" name="add-group" id="add-group"/><button id="add-group-button" name="add-group-button">Add</button></td>
+                </tr>
+                <tr>
+                    <th colspan="2">
+                        <ul id="selected-groups">
+                            <li>Public</li>
+                        </ul></th>
+                </tr>
+                 <tr>
+                    <button id="remove-group">Remove</button>
+                </tr>
+                <tr>
+                    <th>Script Title</th>
+                    <td><input type="text" name="title" id="title"/></td>
+                </tr>
+                <tr>
+                    <th>Note</th>
+                    <td><textarea name="note" id="note"/></textarea></td>
+                </tr>
+            </tbody>
+        </table>
+    </form>
+</div>

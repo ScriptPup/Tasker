@@ -12,7 +12,7 @@ define(['/logon/server_actions.js','text!/logon/register.html','text!/logon/regi
                 self.login(credentials,function(res,creds){
                     if(!res){  
                         $(ls).find('#login-message').html(creds);
-                        $(ls).dialog();                       
+                        $(ls).dialog();          
                     }
                     else { 
                         if (typeof(Storage) !== "undefined") {

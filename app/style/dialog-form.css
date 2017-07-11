@@ -1,0 +1,32 @@
+th {
+    text-align: left;
+}
+ul {
+    list-style: none;
+    border: 1px solid grey;
+    margin: 0px;
+}
+ul,li { list-style-type: none;
+        list-style-position:inside;
+        margin:0;
+        padding:0; }
+li {
+    padding-left: 10px;
+}
+#remove-group {
+    margin-bottom: 20px;
+}
+textarea {
+    width: 100%;
+}
+.ui-selected { background: silver; color: black; }
+.ui-selecting { background: lightgray; }
+li { cursor:  pointer; }
+.ui-menu .ui-menu-item {
+    padding-top: 0px;
+    list-style-image: none;
+    margin-top: 5px;
+}
+#err-msg {
+    color: red;
+}

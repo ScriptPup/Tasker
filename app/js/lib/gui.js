@@ -62,6 +62,7 @@ define(['socketio','moment'], function(io,moment){
             // Only request cards if the path is root and no search pattern is present
             if((window.location.pathname === "/" || window.location.pathname === "index.html")){
                 console.log("Laying cards");
+                $('.main-body').addClass("ScriptGroups");
                 socket.on('lay-card',function(card){
                     Self.layCard(card);
                 });

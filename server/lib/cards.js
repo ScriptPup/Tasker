@@ -2,23 +2,25 @@
 // Currently only used on home page
 var settings = require('../resources/settings.json'),
     mClient = require('mongodb').MongoClient,
-    auth = require('./auth.js');
+    auth = require('./auth.js'),
+    moment = require('moment'),
+    paradigm = require('./paradigm.js'),
+    mapDB = null,
+    contentDB = null;
+    mClient.connect(settings.db_path, function(err, db){
+        if(err){ console.error("Error connecting to database for cards: " + err); }
+        mapDB = db.collection("map");
+        contentDB = db.collection("content");
+    })
 
 module.exports = {
     draw: function(cb,filter){        
         var filt = (filter!==null) ? filter : {"web-part": "card", "access": { "$in": ["public"] }};
-        mClient.connect(settings.db_path, function(err, db){
-            if(err){ console.error("Error connecting to database for cards.draw: " + err); }
-            else {
-                var map = db.collection('map');
-                map.find(filt).each(function(err, doc){
-                    if(err){ console.error("Error querying for cards.draw: " + err); }
-                    else if(doc) {
-                        cb(doc);
-                    }
-                    db.close();
-                });
-            }          
+        mapDB.find(filt, { collation: { locale: 'en', strength: 2 } }).each(function(err, doc){
+            if(err){ console.error("Error querying for cards.draw: " + err); }
+            else if(doc) {
+                cb(doc);
+            }
         });
     },
     layCard: function(cb,part,muser){
@@ -60,18 +62,12 @@ module.exports = {
             });
     },
     content: function(title, cb){
-        mClient.connect(settings.db_path, function(err, db){
-            if(err){ console.error("Error connecting to database for cards.draw: " + err); }
-            else {
-                var map = db.collection('content');
-                map.find({"name": title}).each(function(err, doc){
-                    if(err){ console.error("Error querying for cards.draw: " + err); }
-                    else if(doc) {
-                        cb(doc);
-                    }
-                    db.close();
-                });
-            }          
+        var map = db.collection('content');
+        contentDB.find({"name": title}).each(function(err, doc){
+            if(err){ console.error("Error querying for cards.draw: " + err); }
+            else if(doc) {
+                cb(doc);
+            }
         });
     },
     layContent: function(title,cb){
@@ -81,5 +77,21 @@ module.exports = {
             send = "<div class='center-er'><div class='page-content' id='"+content.name+"'><h2>"+content.title+"</h2>"+content.data+"</div></div>";
             cb(send);
         });
+    },
+    addCard: function(cardData,cb){
+        var filt = { "web-part": "card", "name": cardData.name };
+        mapDB.findOne(filt,function(err, doc){
+            if(err){ console.error("Error querying map for cards.addCard " + err); if(cb){ cb("Failed to check existing ScriptGroups - try again later or contact your site admin."); } }
+            else {
+                cardData.added = moment().toDate();
+                cardData["web-part"] = "card";
+                cardData.path = cardData.name;
+                mapDB.insert(cardData,function(err,record){
+                    if(err){ console.error("Error inserting for cards.addCard " + err); if(cb){ cb("Failed to create new group - try again later or contact your site admin."); } }
+                    else if(cb){ cb(true,record); }
+                });
+            }
+        });
+        paradigm.addGroups(cardData.access);
     }
 }

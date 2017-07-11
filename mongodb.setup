@@ -1,0 +1,29 @@
+use Tasker
+db.createCollection("map", { collation: { locale: 'en_US', strength: 2 } } );
+db.createCollection("auth", { collation: { locale: 'en_US', strength: 2 } } );
+db.createCollection("content");
+db.createCollection("cookies");
+db.createCollection("logs");
+db.createCollection("queue");
+db.createCollection("results");
+db.createCollection("scripts");
+db.createCollection("paradigm");
+
+db.cookies.createIndex( { "cookies.expires": 1 }, { expireAfterSeconds: 0 } )
+db.getCollection("auth").createIndex(
+   { username: 1 },
+   {collation: {locale: "en", strength: 2}}
+ )
+ db.getCollection("auth").createIndex(
+   { email: 1 },
+   {collation: {locale: "en", strength: 2}}
+ )
+ db.getCollection("map").createIndex(
+   { name: 1  },
+   {collation: {locale: "en", strength: 2}}
+ )
+ db.getCollection("map").createIndex(
+   { 'web-part': 1  },
+   {collation: {locale: "en", strength: 2}}
+ )
+ db.paradigm.insert({name: "groups",items: ["public"]});

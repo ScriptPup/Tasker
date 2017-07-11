@@ -14,7 +14,8 @@ var prt = process.env.PORT || 4432,
     script = require('./lib/script.js'),
     auth = require('./lib/auth.js'),
     logging = require('./lib/logging.js'),
-    results = require('./lib/results.js');
+    results = require('./lib/results.js'),
+    paradigm = require('./lib/paradigm.js');
 
 script.setIO(io);
 
@@ -64,6 +65,20 @@ io.of('home').on('connection', function(socket){
     socket.on('content',function(title){
         cards.layContent(title, function(content){
             socket.emit('lay-content',content);
+        });
+    });
+    socket.on('groups',function(){
+        paradigm.getGroups(function(group){
+            socket.emit('groups',group);
+        });
+    });
+    socket.on('addScriptGroup',function(ScriptGroup){
+        cards.addCard(ScriptGroup,function(res, card){
+            if(res === true){ 
+                res = "Succesfully added ScriptGroup"; 
+                socket.emit('lay-card',card);                
+            }
+            socket.emit('addScriptGroup',res);             
         });
     });
 });

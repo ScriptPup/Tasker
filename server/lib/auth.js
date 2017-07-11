@@ -51,7 +51,7 @@ module.exports = {
                 else {
                     var auth = db.collection("auth"),
                         cook = db.collection("cookies");
-                    auth.findOne({$or: [{"username":creds.username},{"email":creds.username}] }, function(err, doc){
+                    auth.findOne({$or: [{"username":creds.username},{"email":creds.username}] }, { collation: { locale: 'en', strength: 2 } }, function(err, doc){
                         if(doc){
                             var pwVer = password.verify(creds.password,doc.password),
                                 cookie_hash = rstring.generate(64),
