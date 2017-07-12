@@ -62,3 +62,6 @@ bs-config.json
 node_modules
 node_modules/*
 npm-debug*
+
+#custom settings fields
+server/resources/settings.json
