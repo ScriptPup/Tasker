@@ -121,3 +121,7 @@ body {
 .icon:hover {
   background-image: url('/style/img/icon-hover.png');
 }
+.main-body {
+    width: 100%; 
+    height: 100%;
+}
