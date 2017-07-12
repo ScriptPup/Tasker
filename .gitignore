@@ -64,6 +64,7 @@ node_modules/*
 npm-debug*
 
 #custom settings fields
+/server/resources/settings.json
 server/resources/settings.json
 server/daemon
 server/daemon/*
