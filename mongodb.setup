@@ -27,3 +27,11 @@ db.getCollection("auth").createIndex(
    {collation: {locale: "en", strength: 2}}
  )
  db.paradigm.insert({name: "groups",items: ["public"]});
+ 
+ db.createUser(
+	   {
+		 user: "TaskerWeb",
+		 pwd: "GetYourTaskOnYouPeasants",
+		 roles: [ "readWrite" ]
+	   }
+	)
