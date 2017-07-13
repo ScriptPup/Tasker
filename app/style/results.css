@@ -8,10 +8,11 @@
 .result-content {
     width: 80%;
     min-width: 600px;
-    height: 80%;
+    min-height: 80%;
     background: beige;
     margin-left: auto;
     margin-right: auto;
+    overflow-y: auto;
 }
 .main-body {
     text-align: center;

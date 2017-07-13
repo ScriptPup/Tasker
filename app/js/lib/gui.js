@@ -61,7 +61,6 @@ define(['socketio','moment'], function(io,moment){
             });
             // Only request cards if the path is root and no search pattern is present
             if((window.location.pathname === "/" || window.location.pathname === "index.html")){
-                console.log("Laying cards");
                 $('.main-body').addClass("ScriptGroups");
                 socket.on('lay-card',function(card){
                     Self.layCard(card);
@@ -69,7 +68,8 @@ define(['socketio','moment'], function(io,moment){
                 socket.emit('cards',muser);
             } else if(window.location.pathname.split('/').length === 2) {
                 socket.on('lay-script', function(data){
-                      Self.layScript(data);                               
+                      Self.layScript(data); 
+                      socket.emit('update-script',data.name);                              
                 });
                 socket.on("update-script",function(sn,ud){
                     Self.updateScript(sn,ud);

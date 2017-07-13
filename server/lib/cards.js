@@ -88,10 +88,22 @@ module.exports = {
                 cardData.path = cardData.name;
                 mapDB.insert(cardData,function(err,record){
                     if(err){ console.error("Error inserting for cards.addCard " + err); if(cb){ cb("Failed to create new group - try again later or contact your site admin."); } }
-                    else if(cb){ cb(true,record); }
+                    else if(cb && record){ 
+                        if(record.hasOwnProperty("ops")){
+                            var card = record.ops[0],
+                                send = "<div class='page-tile' open-new='"+card.openNew+"' id='"+card.name+"' href='"+card.path+"'>"+card.note+"</div>";
+                            cb(true,send); 
+                        }
+                    }
                 });
             }
         });
         paradigm.addGroups(cardData.access);
+    },
+    removeCard: function(Card){
+        var filt = { "web-part": "card", "name": Card };
+        mapDB.deleteOne(filt, function(err,res){
+            if(err){ console.error("Error removing for cards.removeCard " + err); }
+        });
     }
 }

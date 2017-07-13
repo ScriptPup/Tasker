@@ -54,11 +54,13 @@ io.of('home').on('connection', function(socket){
     socket.on('run-script',function(name,muser){
         script.queue(name,muser,null,io);
     });
+    socket.on('update-script',function(cardname){
+        script.get(cardname,function(ud){
+            socket.emit('update-script',cardname,ud);
+        });
+    });
     socket.on('script',function(muser,select){
-        cards.layScript(function(card){            
-            script.get(card.name,function(ud){
-                socket.emit('update-script',card.name,ud);
-            });
+        cards.layScript(function(card){  
             socket.emit('lay-script',card);
         },muser,select);
     });
@@ -74,12 +76,15 @@ io.of('home').on('connection', function(socket){
     });
     socket.on('addScriptGroup',function(ScriptGroup){
         cards.addCard(ScriptGroup,function(res, card){
-            if(res === true){ 
+            if(res == true || res == "true"){  
                 res = "Succesfully added ScriptGroup"; 
                 socket.emit('lay-card',card);                
             }
             socket.emit('addScriptGroup',res);             
         });
+    });
+    socket.on('removeScriptGroup',function(ScriptGroup){
+        cards.removeCard(ScriptGroup);
     });
 });
 logging.init(io);

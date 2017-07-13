@@ -104,13 +104,15 @@ var cardActions = {
             });
         });
     },
-    deleteCard: function(event, ui){
+    deleteCard: function(event, ui){        
        if (ui.target.hasClass('page-tile')) {
-			var tar = $(ui.target)
+			var tar = $(ui.target);
 		} else {
 			var tar = $(ui.target).parents('.page-tile');
-		}
-        console.log(tar);
+        }
+        var socket = $.grep(gSockets, function(e){ return e.nsp === "/home"; })[0];
+        socket.emit('removeScriptGroup',tar.attr('id'));
+        tar.parent().remove();
     }
 }
 
@@ -142,7 +144,7 @@ var contextMenu = {
         if($(event.currentTarget).hasClass("ScriptGroups")){
             
             $(document).contextmenu("replaceMenu",groupContext);
-            if($(ui.target).hasClass("page-tile")){ $(document).contextmenu("enableEntry","delete",true); }
+            if($(ui.target).hasClass("page-tile") || $(ui.target).parent('.page-tile')[0] ){ $(document).contextmenu("enableEntry","delete",true); }
             else { $(document).contextmenu("enableEntry","delete",false); }
             return;
         }
