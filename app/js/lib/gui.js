@@ -67,6 +67,7 @@ define(['socketio','moment'], function(io,moment){
                 });
                 socket.emit('cards',muser);
             } else if(window.location.pathname.split('/').length === 2) {
+                $('.main-body').addClass("Scripts");
                 socket.on('lay-script', function(data){
                       Self.layScript(data);                                                   
                 });
@@ -75,22 +76,7 @@ define(['socketio','moment'], function(io,moment){
                 });
                 socket.emit('script',muser,window.location.pathname.split('/')[1]);
             }
-            else if(window.location.pathname.split('/').length === 3){
-                // More complex than required -- Maybe if expanded will go this route
-                /*
-                socket.on('lay-content',function(data,lscripts){
-                    var h = (document.body.scrollHeight*0.78);
-                    console.log("Laying content");
-                    $('.main-body').append(data);
-                    $('.center-er, .page-content').css('min-height',h);
-                    if(lscripts){
-                         for(var i=0; i<lscripts.length; i++){
-                            requirejs('/js/lib/'+lscripts[i]);
-                        }
-                    }
-                });
-                socket.emit('content',muser,window.location.pathname.split('/')[1]);
-                */
+            else if(window.location.pathname.split('/').length === 3){                
                 require(['text!/content/'+window.location.pathname.split('/')[1]+".html"],function(data){
                     if(data){
                         var h = (document.body.scrollHeight*0.78);

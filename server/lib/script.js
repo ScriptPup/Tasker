@@ -11,8 +11,14 @@ var settings = require('../resources/settings.json'),
     moment = require('moment'),
     results = require('./results.js'),
     logging = require('./logging.js'),
-    gIO=null;
-
+    gIO=null,
+    scriptDB=null,
+    mapDB=null;
+    mClient.connect(settings.db_path, function(err, db){
+        if(err){ console.error("Error connecting to database for scripts: " + err); }
+        scriptDB = db.collection('scripts');
+        mapDB = db.collection('map');
+    });
 module.exports = {
     setIO: function(io){
         gIO = io;
@@ -101,6 +107,7 @@ module.exports = {
         logging.add(name,"Script test started",gIO);
         var Self = this;
         Self.get(name,function(inf){
+            if(inf.run === null){ if(ondata){ ondata("No test specified."); } logging.add(name,"No script test specified, no test run",gIO); return; }
             inf = inf.test;
             var args = [inf.path, inf.args];
             if(inf.run.includes("powershell")){ args = ["-ExecutionPolicy","ByPass", "-File", inf.path] }
@@ -235,7 +242,50 @@ module.exports = {
                 queueTick(io,Self);
             }, queueTickInterval)
         }
+    },
+    addScript: function(newScript,muser, cb){
+        auth.verify(muser,function(usr){   
+            permis = usr.access;                         
+            if(permis!==null && permis !=="undefined"){ 
+                if(Array.isArray(permis)){ 
+                    permis.push("public");
+                } else { permis = [permis,"public"]; }
+            }
+            mapDB.findOne({"name":newScript.group,"access":{$in: permis}, "web-part": "card"},function(err,res){
+                if(!doc){ if(cb){ cb(false,null); return; } }
+                else {
+                    var scriptDoc = {
+                            name: newScript.name
+                            ,run: newScript.type
+                            ,path: newScript.path
+                            ,args: newScript.args
+                            ,status: "Not Run"
+                            ,access: newScript.access                            
+                        },
+                        scriptCard = {
+                            name: newScript.name
+                            ,'web-part': "script"
+                            ,note: "<h3>"+newScript.title+"</h3><p>"+newScript.note+"</p>"
+                            ,openNew: "false"
+                            ,access: newScript.access
+                        };
+                        if(newScript.hasOwnProperty("test")){
+                            scriptDoc.test = newScript.test;
+                        }
+                        else {
+                            scriptDoc.test = {
+                                run: null                               
+                                }
+                            }
+                        }
+                    scriptDB.insertOne(scriptCard,function(err,res){
+                        if(err){ console.error("Error inserting to database for script.scriptDB.insertScript: " + err); return; }
+                        gIO.emit('lay-script',scriptCard);
+                        mapDB.insertOne(scriptDoc,function(err,res){
+                            if(err){ console.error("Error inserting to database for script.scriptDB.insertDoc: " + err); }
+                        });
+                    });
+            });
+        });
     }
-
-
 }

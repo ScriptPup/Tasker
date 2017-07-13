@@ -83,6 +83,9 @@ io.of('home').on('connection', function(socket){
             socket.emit('addScriptGroup',res);             
         });
     });
+    socket.on('addScript',function(newScript,muser){
+        script.addScript(newScript,muser);
+    });
     socket.on('removeScriptGroup',function(ScriptGroup){
         cards.removeCard(ScriptGroup);
     });

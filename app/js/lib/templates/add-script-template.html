@@ -7,18 +7,18 @@
                     <td><input type="text" name="name" id="name"/></td>
                 </tr>
                 <tr>
-                    <th>Script Type</th>
-                    <td>
-                        <select>
-                            <option value="powershell.exe">Powershell</option>
-                        </select>
-                    </td>
+                    <th>Script Path</th>
+                    <td><input type="text" name="path" id="path"/></td>
                 </tr>
                 <tr>
-                    <th>Script Group</th>
+                    <th>Script Arguments</th>
+                    <td><input type="text" name="args" id="args"/></td>
+                </tr>
+                <tr>
+                    <th>Script Type</th>
                     <td>
-                        <select name="script-group" id="script-group">
-                            
+                        <select id="type">
+                            <option value="powershell.exe">Powershell</option>
                         </select>
                     </td>
                 </tr>
@@ -33,7 +33,7 @@
                         </ul></th>
                 </tr>
                  <tr>
-                    <button id="remove-group">Remove</button>
+                    <td colspan="2" style="text-align: right;"><button id="remove-group">Remove</button></td>
                 </tr>
                 <tr>
                     <th>Script Title</th>
