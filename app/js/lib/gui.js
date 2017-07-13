@@ -68,8 +68,7 @@ define(['socketio','moment'], function(io,moment){
                 socket.emit('cards',muser);
             } else if(window.location.pathname.split('/').length === 2) {
                 socket.on('lay-script', function(data){
-                      Self.layScript(data); 
-                      socket.emit('update-script',data.name);                              
+                      Self.layScript(data);                                                   
                 });
                 socket.on("update-script",function(sn,ud){
                     Self.updateScript(sn,ud);
@@ -173,6 +172,7 @@ define(['socketio','moment'], function(io,moment){
                             $(document).contextmenu('open',$(e.target));
                          });
                          $('.main-body').append($("<div class='center-er'>").append(template));
+                         socket.emit('update-script',script.name);  
                     });
         }        
     }
