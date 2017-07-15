@@ -251,12 +251,12 @@ module.exports = {
                     permis.push("public");
                 } else { permis = [permis,"public"]; }
             }
-            mapDB.findOne({"name":newScript.group,"access":{$in: permis}, "web-part": "card"},function(err,res){
+            mapDB.findOne({"group": newScript.group,"access":{$in: permis}, "web-part": "card"},function(err,doc){
                 if(!doc){ if(cb){ cb(false,null); return; } }
                 else {
                     var scriptDoc = {
                             name: newScript.name
-                            ,run: newScript.type
+                            ,run: newScript.run
                             ,path: newScript.path
                             ,args: newScript.args
                             ,status: "Not Run"
@@ -265,9 +265,11 @@ module.exports = {
                         scriptCard = {
                             name: newScript.name
                             ,'web-part': "script"
-                            ,note: "<h3>"+newScript.title+"</h3><p>"+newScript.note+"</p>"
+                            ,title: newScript.title
+                            ,note: "<p>"+newScript.note+"</p>"
                             ,openNew: "false"
                             ,access: newScript.access
+                            ,group: newScript.group
                         };
                         if(newScript.hasOwnProperty("test")){
                             scriptDoc.test = newScript.test;
@@ -277,14 +279,15 @@ module.exports = {
                                 run: null                               
                                 }
                             }
-                        }
-                    scriptDB.insertOne(scriptCard,function(err,res){
+                        
+                    scriptDB.insertOne(scriptDoc,function(err,res){
                         if(err){ console.error("Error inserting to database for script.scriptDB.insertScript: " + err); return; }
-                        gIO.emit('lay-script',scriptCard);
-                        mapDB.insertOne(scriptDoc,function(err,res){
+                        gIO.emit('lay-script',scriptDoc);
+                        mapDB.insertOne(scriptCard,function(err,res){
                             if(err){ console.error("Error inserting to database for script.scriptDB.insertDoc: " + err); }
                         });
                     });
+                }
             });
         });
     }

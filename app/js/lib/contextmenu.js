@@ -51,9 +51,7 @@ var scriptActions = {
             socket.emit('scriptgroups');
             socket.emit('groups');
             
-            $(data).find('#selected-groups').selectable({
-
-            });
+            $(data).find('#selected-groups').selectable({});
             $(data).find('#add-group-button').on('click',function(e){
                 var tarVal = $('#add-group').val();
                 if(tarVal !== null && tarVal !== 'undefined' && tarVal !== ""){
@@ -69,13 +67,13 @@ var scriptActions = {
             });
             var dialog = $(data).dialog({
                 autoOpen: true,
-                height: 500,
+                height: 535,
                 width: 620,
                 modal: true,
                 buttons: {
-                    "Add": { 
-                        text: "Add",
-                        id: "Add-ScriptGroup",
+                    "Next": {
+                        text: "Next",
+                        id: "ScriptNext",
                         click: function(){
                             $('#err-msg').empty();                          
                             var dataz = {
@@ -83,7 +81,7 @@ var scriptActions = {
                                 path: $('#path').val(),
                                 args: $('#args').val(),
                                 access: function(){ a = new Array(); $('#selected-groups li').each(function(o,obj){ a.push(obj.innerText); }); return a; }(),
-                                type: $('#type option:selected').val(),
+                                run: $('#type option:selected').val(),
                                 title: $('#title').val(),
                                 note: $('#note').val(),
                                 group: window.location.pathname.split('/')[1],
@@ -91,22 +89,97 @@ var scriptActions = {
                             }
                             var ver = verifyNew(dataz);
                             if(ver === true){
-                                socket.off('addScript');
-                                socket.on('addScript',function(res){
-                                    if(res===true){
-                                        dialog.dialog('close');
-                                    } else {
-                                        $('#err-msg').html(res);
-                                    }
+                                dialog.dialog('destroy').remove();
+                                scriptActions.addTest(dataz,function(dataz2){
+                                    socket.off('addScript');
+                                    socket.on('addScript',function(res){
+                                        if(res===true){
+                                            dialog.dialog('destroy').remove();
+                                        } else {
+                                            window.alert(res);
+                                        }
+                                    });                                
+                                    socket.emit('addScript',dataz2,muser);
                                 });
-                                socket.emit('addScript',dataz,muser);
                             }
-                            else { $('#err-msg').html(ver); }
+                            else { $('#err-msg-script').html(ver); }
                         }
                     },
-                    "Cancel": function(){ dialog.dialog('close'); }
+                    "Cancel": function(){ dialog.dialog('destroy').remove(); }
                 },
                 close: function(){ $('#err-msg').empty(); }
+            });
+        });
+
+    },
+    addTest: function(datafull,cb){        
+        require(['text!/js/lib/templates/add-scripttest-template.html'],function(data){
+            var once = false;
+            var verifyNew = function(obj){    
+                console.log(obj);   
+                if(obj.path == null || obj.path =="" || obj.path == "undefined"){ console.log("No path"); return false; }
+                if(obj.args == null || obj.args =="" || obj.args == "undefined"){ console.log("No args"); return false; }
+                return true;
+            }
+            loadCSS('/style/dialog-form.css');
+            data = $(data);
+            socket.on('groups',function(data){
+                $('#add-group').autocomplete({
+                    source: data,
+                    minLength: 0
+                });
+                $('#add-group').on('click',function(){
+                    $('#add-group').autocomplete( "search", "" );
+                });
+            });
+            socket.emit('scriptgroups');
+            socket.emit('groups');
+            
+            $(data).find('#selected-groups').selectable({});
+            $(data).find('#add-group-button').on('click',function(e){
+                var tarVal = $('#add-group').val();
+                if(tarVal !== null && tarVal !== 'undefined' && tarVal !== ""){
+                    $('<li>'+tarVal.toLowerCase()+'</li>').appendTo('#selected-groups');
+                    $('#add-group').val(null);                    
+                }
+            });
+            $(data).find('#remove-group').on('click',function(e){
+                $('.ui-selected').each(function(a,obj){
+                    $(obj).remove();
+                });
+            });
+            var dialog = $(data).dialog({
+                autoOpen: true,
+                height: 500,
+                width: 620,
+                modal: true,
+                buttons: {
+                    "Add": { 
+                        text: "Add Script",
+                        id: "Add-ScriptGroup",
+                        click: function(){
+                            $('#err-msg-test').empty();                          
+                            var dataz = {
+                                path: $('#path').val(),
+                                args: $('#args').val(),
+                                run: $('#type option:selected').val(),
+                            }
+                            var ver = verifyNew(dataz); 
+                            if(ver != true && once === false) 
+                                { 
+                                    once = true; 
+                                    $('#err-msg-test').html("You haven't filled out all of the test script fields. Without a test, Tasker will not be able to report success properly. If you are sure, press add again."); 
+                                }
+                            else {
+                                dialog.dialog('destroy').remove();
+                                datafull.test = dataz;
+                                cb(datafull);
+                            }
+                        }
+                    },
+                    "Cancel": function(){ dialog.dialog('destroy').remove(); }
+                },
+                close: function(){ $('#err-msg-test').empty(); }
             });
         });
 

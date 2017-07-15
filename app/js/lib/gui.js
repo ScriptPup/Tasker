@@ -142,7 +142,9 @@ define(['socketio','moment'], function(io,moment){
             if(ud.hasOwnProperty("status")){ $("#"+script).find(".script-status-result").html(ud.status); }
             if(ud.hasOwnProperty("test")){
                 if(ud.test.hasOwnProperty("status")){ $("#"+script).find(".script-test-result").html(ud.test.status); }
-                if(ud.test.status.includes("fail") || ud.test.status == false){ $("#"+script).find(".script-test-result").css("color","red"); }
+                if(ud.test.hasOwnProperty("status")){
+                    if(ud.test.status.includes("fail") || ud.test.status == false){ $("#"+script).find(".script-test-result").css("color","red"); }
+                }
                 if(ud.test.hasOwnProperty("last-run")){ $("#"+script).find(".script-test-run").html(ud.test["last-run"]); }
             }            
         },

@@ -30,3 +30,6 @@ li { cursor:  pointer; }
 #err-msg {
     color: red;
 }
+.err {
+    color: red;
+}
