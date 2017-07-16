@@ -251,7 +251,7 @@ module.exports = {
                     permis.push("public");
                 } else { permis = [permis,"public"]; }
             }
-            mapDB.findOne({"group": newScript.group,"access":{$in: permis}, "web-part": "card"},function(err,doc){
+            mapDB.findOne({"name": newScript.group,"access":{$in: permis}, "web-part": "card"},function(err,doc){
                 if(!doc){ if(cb){ cb(false,null); return; } }
                 else {
                     var scriptDoc = {

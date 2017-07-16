@@ -159,7 +159,11 @@ define(['socketio','moment'], function(io,moment){
                          template.on('click',function(e){
                             $(document).contextmenu('open',$(e.target));
                          });
-                         $('.main-body').append($("<div class='center-er'>").append(template));
+                        if(!$('.center-er')[0]){
+                            $('.main-body').append($("<div class='center-er'>").append(template));
+                        } else {
+                            $('.center-er').append(template);
+                        }
                          socket.emit('update-script',script.name);  
                     });
         }        
