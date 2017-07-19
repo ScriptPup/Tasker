@@ -39,6 +39,16 @@ var scriptActions = {
             var socket = $.grep(gSockets, function(e){ return e.nsp === "/home"; })[0];
             loadCSS('/style/dialog-form.css');
             data = $(data);
+            socket.off('scriptTypes');
+            socket.on('scriptTypes',function(data){
+                if(data.hasOwnProperty("mod")){
+                    eval(data.mod);
+                }
+                for(var i=0; i < data.types.length; i++){
+                     $('#type').append($("<option value='"+data.types[i]+"'>"+data.types[i]+"</option>"));
+                }
+            });
+            socket.off("groups");
             socket.on('groups',function(data){
                 $('#add-group').autocomplete({
                     source: data,
@@ -50,6 +60,7 @@ var scriptActions = {
             });
             socket.emit('scriptgroups');
             socket.emit('groups');
+            socket.emit('scriptTypes');
             
             $(data).find('#selected-groups').selectable({});
             $(data).find('#add-group-button').on('click',function(e){
@@ -123,6 +134,7 @@ var scriptActions = {
             }
             loadCSS('/style/dialog-form.css');
             data = $(data);
+            socket.off("groups");
             socket.on('groups',function(data){
                 $('#add-group').autocomplete({
                     source: data,
@@ -132,7 +144,36 @@ var scriptActions = {
                     $('#add-group').autocomplete( "search", "" );
                 });
             });
+            socket.off('scriptTypes');
+            socket.on('scriptTypes',function(data){   
+                for(var i=0; i < data.types.length; i++){
+                    if(data.hasOwnProperty("mods")){
+                        if(data.mods.hasOwnProperty(data.types[i])){
+                            $('#type').append($("<option id='"+data.types[i]+"' value='"+data.types[i]+"'>"+data.types[i]+"</option>").attr("mod",data.mods[data.types[i]]));
+                        }
+                        else {
+                            $('#type').append($("<option id='"+data.types[i]+"' value='"+data.types[i]+"'>"+data.types[i]+"</option>"));
+                        }
+                    }
+                    else {
+                        $('#type').append($("<option id='"+data.types[i]+"' value='"+data.types[i]+"'>"+data.types[i]+"</option>"));
+                    }                    
+                }
+                $('#type').on('change',function(){
+                    var doThis = $('#type :selected').attr('mod');
+                    $('#addScript').find('input').each(function(){
+                        $(this).attr('disabled',false);
+                        if(($(this).attr('id') != "path") && ($(this).attr('id') != "args") && ($(this).attr('id') != "type")){
+                            $(this).parent().parent().remove();
+                        }
+                    });
+                    if(doThis){
+                        eval(doThis);
+                    }
+                });                
+            });
             socket.emit('scriptgroups');
+            socket.emit('scriptTypes');
             socket.emit('groups');
             
             $(data).find('#selected-groups').selectable({});

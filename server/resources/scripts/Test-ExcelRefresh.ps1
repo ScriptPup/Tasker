@@ -9,11 +9,11 @@ Updated: 07/18/2017
 Param(
     [Parameter(Mandatory=$True,Position=1)]
     [String]$Path,
-    [Parameter(Mandatory=$false,Position=2)]
+    [Parameter(Mandatory=$false)]
     [String]$Worksheet,
-    [Parameter(Mandatory=$false,Position=2)]
+    [Parameter(Mandatory=$false)]
     [String]$Range,
-    [Parameter(Mandatory=$false,Position=2)]
+    [Parameter(Mandatory=$false)]
     [switch]$LastModified
 )  
 $start_check = Get-Date;

@@ -74,6 +74,11 @@ io.of('home').on('connection', function(socket){
             socket.emit('groups',group);
         });
     });
+    socket.on('scriptTypes',function(){
+        paradigm.getTypes(function(types){
+            socket.emit('scriptTypes',types);
+        });
+    });
     socket.on('addScriptGroup',function(ScriptGroup){
         cards.addCard(ScriptGroup,function(res, card){
             if(res == true || res == "true"){  

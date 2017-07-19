@@ -3,6 +3,7 @@ var settings = require('../resources/settings.json'),
     auth = require('./auth.js'),
     mClient = require('mongodb').MongoClient,
     spawn = require('child_process').spawn,
+    tpath = require('path'),
     queueTicker = null,
     queueTickInterval = (5*60*1000),
     queueStarted = false,
@@ -13,11 +14,13 @@ var settings = require('../resources/settings.json'),
     logging = require('./logging.js'),
     gIO=null,
     scriptDB=null,
+    scriptTypes=null,
     mapDB=null;
     mClient.connect(settings.db_path, function(err, db){
         if(err){ console.error("Error connecting to database for scripts: " + err); }
         scriptDB = db.collection('scripts');
         mapDB = db.collection('map');
+        scriptTypes = db.collection('scriptTypes');
     });
 module.exports = {
     setIO: function(io){
@@ -72,62 +75,82 @@ module.exports = {
         Self.get(name,function(inf){
             var args = [inf.path, inf.args],
                 erred = false;
-            if(inf.run.includes("powershell")){ args = ["-ExecutionPolicy","ByPass", "-File", inf.path] }
-            args = args.concat(inf.args.split(" "));
-            var nSpawn = spawn(inf.run,args);
-            nSpawn.stdout.on("data",function(data){
-                if(ondata){ ondata(data); }
-            });
-            nSpawn.stdout.on("data",function(data){
-                results.add(name,data.toString(),gIO);
-            });
-            nSpawn.stderr.on("data",function(data){
-                erred = true;
-                Self.statusUpdate(name,"Error, check script",function(){
-                       
-                });
-                logging.add(name,"Script error: "+data.toString(),gIO);
-                console.error(data.toString());
-            });
-            nSpawn.on("exit",function(){
-                if(!erred){               
-                    Self.statusUpdate(name,"Complete",function(){
-                        logging.add(name,"Script completed successfully",gIO);
-                        if(onexit){ onexit(true); }
-                    });     
-                } else { 
-                    if(onexit){ onexit(false); logging.add(name,"Script failed to exit properly",gIO); }                
+            scriptTypes.findOne({'type': inf.run, 'for':"script"}, function(err, doc){
+                var usePath = inf.path.replace("<root>",tpath.join(__dirname,"..","resources"));
+                for(var i=0; i < doc.args.length; i++){
+                    doc.args[i] = doc.args[i].replace("<root>",tpath.join(__dirname,"..","resources"));
                 }
+                if(err){ console.error("Error pulling info for scripts.run: " + err); return; }
+                if(!doc){ console.error("Error finding scriptType for scripts.run: " + inf.run); return; }
+                args = doc.args;
+                args.push(usePath);
+                splitted = inf.args.split(" ");
+                splitted = splitted.filter(function(n){ return (n != undefined && n != "") })
+                args = args.concat(splitted);
+                var nSpawn = spawn(doc.run,args);                
+                nSpawn.stdout.on("data",function(data){
+                    if(ondata){ ondata(data); }
+                });
+                nSpawn.stdout.on("data",function(data){
+                    results.add(name,data.toString(),gIO);
+                });
+                nSpawn.stderr.on("data",function(data){
+                    erred = true;
+                    Self.statusUpdate(name,"Error, check script",function(){
+                        
+                    });
+                    logging.add(name,"Script error: "+data.toString(),gIO);
+                });
+                nSpawn.on("exit",function(){
+                    if(!erred){               
+                        Self.statusUpdate(name,"Complete",function(){
+                            logging.add(name,"Script completed successfully",gIO);
+                            if(onexit){ onexit(true); }
+                        });     
+                    } else { 
+                        if(onexit){ onexit(false); logging.add(name,"Script failed to exit properly",gIO); }                
+                    }
+                });
+                nSpawn.stdin.end(); //end input
+                Self.statusUpdate(name,"Running");
             });
-            nSpawn.stdin.end(); //end input
-            Self.statusUpdate(name,"Running");
         });
     },
     test: function(name,ondata,onexit){
         logging.add(name,"Script test started",gIO);
         var Self = this;
         Self.get(name,function(inf){
-            if(inf.run === null){ if(ondata){ ondata("No test specified."); } logging.add(name,"No script test specified, no test run",gIO); return; }
+            if(inf.path === null){ if(ondata){ ondata("No test specified."); } logging.add(name,"No script test specified, no test run",gIO); return; }
             inf = inf.test;
-            var args = [inf.path, inf.args];
-            if(inf.run.includes("powershell")){ args = ["-ExecutionPolicy","ByPass", "-File", inf.path] }
-            args = args.concat(inf.args.split(" "));
-            var nSpawn = spawn(inf.run,args);
-            nSpawn.stdout.on("data",function(data){
-                var ud = {"test.status": data.toString(), "test.last-run": moment().toDate()};
-                Self.update("scripts",name,ud,function(){                    
-                    if(ondata){ ondata(data); }
-                });                
+            scriptTypes.findOne({'type': inf.run, 'for':"test"}, function(err, doc){
+                    var usePath = inf.path.replace("<root>",tpath.join(__dirname,"..","resources")),
+                        splitted = inf.args.split(" ");
+                    for(var i=0; i < doc.args.length; i++){
+                        doc.args[i] = doc.args[i].replace("<root>",tpath.join(__dirname,"..","resources"));
+                    }
+                    if(err){ console.error("Error pulling info for scripts.test: " + err); return; }
+                    if(!doc){ console.error("Error finding scriptType for scripts.test: " + inf.run); return; }
+                    args = doc.args;
+                    args.push(usePath);             
+                    splitted = inf.args.split(" ");
+                    splitted = splitted.filter(function(n){ return (n != undefined && n != "") })
+                    args = args.concat(splitted);
+                var nSpawn = spawn(doc.run,args);
+                nSpawn.stdout.on("data",function(data){
+                    var ud = {"test.status": data.toString(), "test.last-run": moment().toDate()};
+                    Self.update("scripts",name,ud,function(){                    
+                        if(ondata){ ondata(data); }
+                    });                
+                });
+                nSpawn.stderr.on("data",function(data){                    
+                    console.error(data.toString());
+                });
+                nSpawn.on("exit",function(){
+                    logging.add(name,"Script test completed successfully",gIO);
+                    if(onexit){ onexit(true); } else { logging.add(name,"Script test failed",gIO); }
+                });
+                nSpawn.stdin.end(); //end input
             });
-            nSpawn.stderr.on("data",function(data){
-                
-                console.error(data.toString());
-            });
-            nSpawn.on("exit",function(){
-                logging.add(name,"Script test completed successfully",gIO);
-                if(onexit){ onexit(true); } else { logging.add(name,"Script test failed",gIO); }
-            });
-            nSpawn.stdin.end(); //end input
         });
     },
     getQueue: function(name,when,cb){

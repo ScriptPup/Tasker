@@ -22,5 +22,11 @@ module.exports = {
                 if(err){ console.error("Failed to update group entry in paradigm.addGroups " + err); }
             }
         );
+    },
+    getTypes: function(cb){
+        pDB.find({name:"scriptTypes"}).each(function(err,doc){
+            if(err){ console.error("Error querying to database for paradigm.scriptTypes"); return; }
+            if(cb && doc !== null && doc !== "" && doc !== "undefined"){ cb({"types": doc.items, "mods": doc.mods}); }            
+        });
     }
 }
