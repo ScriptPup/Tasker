@@ -127,7 +127,6 @@ var scriptActions = {
         require(['text!/js/lib/templates/add-scripttest-template.html'],function(data){
             var once = false;
             var verifyNew = function(obj){    
-                console.log(obj);   
                 if(obj.path == null || obj.path =="" || obj.path == "undefined"){ console.log("No path"); return false; }
                 if(obj.args == null || obj.args =="" || obj.args == "undefined"){ console.log("No args"); return false; }
                 return true;

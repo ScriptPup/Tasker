@@ -275,7 +275,7 @@ module.exports = {
                 } else { permis = [permis,"public"]; }
             }
             mapDB.findOne({"name": newScript.group,"access":{$in: permis}, "web-part": "card"},function(err,doc){
-                if(!doc){ if(cb){ cb(false,null); return; } }
+                if(!doc){ console.error("Failed to add script, user doesn't have access to requested grou"); if(cb){ cb(false,null); return; } }
                 else {
                     var scriptDoc = {
                             name: newScript.name
