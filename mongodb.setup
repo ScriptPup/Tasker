@@ -5,33 +5,46 @@ db.createCollection("content");
 db.createCollection("cookies");
 db.createCollection("logs");
 db.createCollection("queue");
+db.createCollection("schedule");
 db.createCollection("results");
 db.createCollection("scripts");
 db.createCollection("paradigm");
+db.createCollection("scriptTypes");
 
 db.cookies.createIndex( { "cookies.expires": 1 }, { expireAfterSeconds: 0 } )
 db.getCollection("auth").createIndex(
    { username: 1 },
    {collation: {locale: "en", strength: 2}}
- )
+ );
  db.getCollection("auth").createIndex(
    { email: 1 },
    {collation: {locale: "en", strength: 2}}
- )
+ );
  db.getCollection("map").createIndex(
    { name: 1  },
    {collation: {locale: "en", strength: 2}}
- )
+ );
  db.getCollection("map").createIndex(
    { 'web-part': 1  },
    {collation: {locale: "en", strength: 2}}
- )
- db.paradigm.insert({name: "groups",items: ["public"]});
- 
+ );
+ var bulkPD = db.paradigm.initializeUnorderedBulkOp();
+ bulkPD.insert({name: "groups",items: ["public"]});
+ bulkPD.insert({name: "scriptTypes",items: ["powershell","Excel Refresh"],mods: {"Excel Refresh": "(function(){function updateArgs(){var wsArg=$('#worksheet').val(),rArg=$('#rangd').val(),newArgs='-Worksheet '+$('#worksheet').val()+' -Range '+$('#rangd').val();if(!wsArg||!rArg||$('#rangd').attr('disabled')||$('#worksheet').attr('disabled')){newArgs='-LastModified';};$('#args').val(newArgs);};var checks=$('<tr><td colspan='2'>LastModified<input name='opt' type='radio' id='LastModified' checked=true>ByRange<input name='opt' type='radio' id='ByRange'></td></tr>'),worksheet=$('<tr><td>Worksheet</td><td><input type='text' name='worksheet' id='worksheet' disabled=true></td></tr>'),range=$('<tr><td>Range</td><td><input type='text' name='rangd' id='rangd' disabled=true></td></tr>');$('#args').attr('disabled',true);$('#type').parent().parent().after(checks);$('#args').parent().parent().after(range);$('#args').parent().parent().after(worksheet);$('#LastModified').on('click',function(){$('#worksheet').attr('disabled',true);$('#rangd').attr('disabled',true);});$('#ByRange').on('click',function(){$('#worksheet').attr('disabled',false);$('#rangd').attr('disabled',false);});$('#worksheet').on('input',function(){updateArgs();});$('#rangd').on('input',function(){updateArgs();});updateArgs();})();"}});
+ bulkPD.execute();
+
+var bulkST = db.scriptTypes.initializeUnorderedBulkOp();
+bulkST.insert({"type":"powershell","args":["-ExecutionPolicy","ByPass","-File"],"run":"powershell.exe","for":"script"})
+bulkST.insert({"type":"Excel Refresh","run":"powershell.exe","args":["-ExecutionPolicy","ByPass","-File","<root>\\scripts\\Excel-Refresh.ps1","-path"],"for":"script"});
+bulkST.insert({"type":"powershell","args":["-ExecutionPolicy","ByPass","-File"],"run":"powershell.exe","for":"test"});
+bulkST.insert({"type":"Excel Refresh","run":"powershell.exe","args":["-ExecutionPolicy","ByPass","-File","<root>\\scripts\\Test-ExcelRefresh.ps1","-path"],"for":"test"});
+bulkST.execute();
+
+
  db.createUser(
 	   {
 		 user: "TaskerWeb",
 		 pwd: "GetYourTaskOnYouPeasants",
 		 roles: [ "readWrite" ]
 	   }
-	)
+	);
