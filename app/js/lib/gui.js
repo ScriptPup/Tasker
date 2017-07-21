@@ -152,6 +152,7 @@ define(['socketio','moment'], function(io,moment){
              require(['text!./templates/script-card-template.html'],function(temp){
                          var template = $(temp);                             
                          template.attr("id",script.name);
+                         template.attr("group",script.group);
                          template.find(".script-title").html(script.title);
                          template.find(".script-note").html(script.note);
                          template.find(".script-last-run").html(moment(script["last-run"]).format("MM/DD/YYYY hh:mm:ss A"));

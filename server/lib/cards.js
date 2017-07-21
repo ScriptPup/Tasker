@@ -86,6 +86,7 @@ module.exports = {
                 cardData.added = moment().toDate();
                 cardData["web-part"] = "card";
                 cardData.path = cardData.name;
+                cardData.openNew = false;
                 mapDB.insert(cardData,function(err,record){
                     if(err){ console.error("Error inserting for cards.addCard " + err); if(cb){ cb("Failed to create new group - try again later or contact your site admin."); } }
                     else if(cb && record){ 

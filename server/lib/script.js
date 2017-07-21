@@ -170,10 +170,10 @@ module.exports = {
             }  
         });        
     },
-    queue: function(name,muser,at,io){
+    queue: function(name,group,muser,at,io){
         at = (at) ? at : "1990-01-01 8:00:00 AM";
         var Self = this,
-            job = {"name":name,"added": moment().format("YYY-MM-DD hh:mm:ss A"),"when":at};
+            job = {"name":name, "group": group, "added": moment().format("YYY-MM-DD hh:mm:ss A"),"when":at};
         mClient.connect(settings.db_path, function(err, db){
             if(err){ console.error("Error connecting to database for queue.send: " + err); }
             else {
@@ -283,7 +283,8 @@ module.exports = {
                             ,path: newScript.path
                             ,args: newScript.args
                             ,status: "Not Run"
-                            ,access: newScript.access                            
+                            ,access: newScript.access
+                            ,group: newScript.group                         
                         },
                         scriptCard = {
                             name: newScript.name

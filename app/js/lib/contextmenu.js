@@ -7,7 +7,7 @@ var scriptActions = {
 			var tar = $(ui.target).parents('.script-tile');
 		}
         var socket = $.grep(gSockets, function(e){ return e.nsp === "/home"; })[0];
-        socket.emit('run-script', $(tar).attr('id'),muser);
+        socket.emit('run-script', $(tar).attr('id'), $(tar).attr('group'),muser);
         console.log('Running script '+ $(tar).attr('id'));
     },
     viewScriptResults: function(event,ui){
@@ -88,12 +88,12 @@ var scriptActions = {
                         click: function(){
                             $('#err-msg').empty();                          
                             var dataz = {
-                                name: $('#name').val(),
+                                name: $('#name').val().replace(" ","_"),
                                 path: $('#path').val(),
                                 args: $('#args').val(),
                                 access: function(){ a = new Array(); $('#selected-groups li').each(function(o,obj){ a.push(obj.innerText); }); return a; }(),
                                 run: $('#type option:selected').val(),
-                                title: $('#title').val(),
+                                title: $('#name').val(),
                                 note: $('#note').val(),
                                 group: window.location.pathname.split('/')[1],
                                 createdBy: muser.username
@@ -255,8 +255,7 @@ var cardActions = {
                 var tarVal = $('#add-group').val();
                 if(tarVal !== null && tarVal !== 'undefined' && tarVal !== ""){
                     $('<li>'+tarVal.toLowerCase()+'</li>').appendTo('#selected-groups');
-                    $('#add-group').val(null);
-                    
+                    $('#add-group').val(null);                    
                 }
             });
             $(data).find('#remove-group').on('click',function(e){
@@ -276,9 +275,9 @@ var cardActions = {
                         click: function(){
                             $('#err-msg').empty();                          
                             var dataz = {
-                                name: $('#name').val(),
+                                name: $('#name').val().replace(" ","_"),
                                 access: function(){ a = new Array(); $('#selected-groups li').each(function(o,obj){ a.push(obj.innerText); }); return a; }(),
-                                note: "<h3>" + $('#title').val() + "</h3>" + $('#note').val(),
+                                note: "<h3>" + $('#name').val() + "</h3>" + $('#note').val(),
                                 createdBy: muser.username
                             }
                             var ver = verifyNewCard(dataz);
@@ -341,15 +340,23 @@ var contextMenu = {
             $(document).contextmenu("replaceMenu",scriptContext);
             return;
         }
-        if($(event.currentTarget).hasClass("ScriptGroups")){            
+        if($(event.currentTarget).hasClass("ScriptGroups")){      
+            var tar = ui.target;
+            if(tar.prop("tagName") !== "DIV"){
+                tar = tar.parents(".page-tile");
+            }      
             $(document).contextmenu("replaceMenu",groupContext);
-            if($(ui.target).hasClass("page-tile") || $(ui.target).parent('.page-tile')[0] ){ $(document).contextmenu("enableEntry","delete",true); }
+            if($(tar).hasClass("page-tile") || $(tar).parent('.page-tile')[0] ){ $(document).contextmenu("enableEntry","delete",true); }
             else { $(document).contextmenu("enableEntry","delete",false); }
             return;
         }
         if($(event.currentTarget).hasClass("Scripts")){      
+            var tar = ui.target;
+            if(tar.prop("tagName") !== "DIV"){
+                tar = tar.parents(".script-tile");
+            }
             $(document).contextmenu("replaceMenu",scriptContext);
-            if($(ui.target).hasClass("script-tile") || $(ui.target).parent('.script-tile')[0] ){ 
+            if($(tar).hasClass("script-tile") || $(tar).parent('.script-tile')[0] ){ 
                 $(document).contextmenu("enableEntry","run",true);
                 $(document).contextmenu("enableEntry","viewr",true); 
                 $(document).contextmenu("enableEntry","viewe",true); 

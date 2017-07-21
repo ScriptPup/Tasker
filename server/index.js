@@ -51,8 +51,8 @@ io.of('home').on('connection', function(socket){
             socket.emit('lay-card',card);
         },"card",usr);
     });
-    socket.on('run-script',function(name,muser){
-        script.queue(name,muser,null,io);
+    socket.on('run-script',function(name,group,muser){
+        script.queue(name,group,muser,null,io);
     });
     socket.on('update-script',function(cardname){
         script.get(cardname,function(ud){
