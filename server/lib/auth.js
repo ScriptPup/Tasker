@@ -74,7 +74,7 @@ module.exports = {
     verify: function(muser,cb){
         if(!muser){ cb(false); return; }
         if(!muser.hasOwnProperty("username")){ cb(false); return; }
-        if(!muser.hasOwnProperty("cookie")){ cb(calse); return; }
+        if(!muser.hasOwnProperty("cookie")){ cb(false); return; }
         if(!muser.cookie.hasOwnProperty("hash")){ cb(false); return; }
         var username = muser.username,
             cookie = muser.cookie.hash;
