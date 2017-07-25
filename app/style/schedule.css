@@ -1,0 +1,49 @@
+@import url(https://fonts.googleapis.com/css?family=Orbitron);
+.schedules {
+    text-align: center;
+    width: 100%;
+}
+.schedule {
+    display: inline-block;
+}
+.schedule > div {
+    margin: 15px;
+}
+div.clock.exception {
+    margin: 0px;
+}
+.clock {
+    font-family: 'Orbitron', sans-serif;
+    background-color: #3c434c;
+    padding: 10px;
+}
+.clock div {
+  display:inline-block;
+  background-color: #202731;
+  text-align: center;
+  color: white;
+  padding: 3px;
+}
+.clock div {
+    display: block;
+
+}
+.clock .days {
+    font-size: small;
+}
+.title {
+    font-size: x-large;
+    text-align: left;
+}
+.note {
+    margin-bottom: 5px;
+    text-align: left;
+}
+.schedule {
+    background: -webkit-radial-gradient(center, circle farthest-corner, rgba(255,255,255,0) 50%, rgba(200,200,200,1)), -webkit-radial-gradient(center, circle, rgba(255,255,255,.35), rgba(255,255,255,0) 20%, rgba(255,255,255,0) 21%), -webkit-radial-gradient(center, circle, rgba(0,0,0,.2), rgba(0,0,0,0) 20%, rgba(0,0,0,0) 21%), -webkit-radial-gradient(center, circle farthest-corner, #f0f0f0, #c0c0c0);
+    background-size: 100% 100%, 10px 10px, 10px 10px, 100% 100%;
+    background-repeat: no-repeat, repeat, repeat, no-repeat;
+    background-position: top center, 1px 1px, 0px 0px, top center;
+    box-shadow: 0 0 10px rgba(0,0,0,-0.3);
+
+}

@@ -76,7 +76,7 @@ define(['socketio','moment'], function(io,moment){
                 });
                 socket.emit('script',muser,window.location.pathname.split('/')[1]);
             }
-            else if(window.location.pathname.split('/').length === 3){                
+            else if(window.location.pathname.split('/').length === 3){  
                 require(['text!/content/'+window.location.pathname.split('/')[1]+".html"],function(data){
                     if(data){
                         var h = (document.body.scrollHeight*0.78);

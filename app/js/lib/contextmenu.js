@@ -310,6 +310,14 @@ var cardActions = {
         var socket = $.grep(gSockets, function(e){ return e.nsp === "/home"; })[0];
         socket.emit('removeScriptGroup',tar.attr('id'));
         tar.parent().remove();
+    },
+    schedules: function(event, ui){
+        if (ui.target.hasClass('page-tile')) {
+			var tar = $(ui.target);
+		} else {
+			var tar = $(ui.target).parents('.page-tile');
+        }
+        gui.navigate("/schedule/?for="+tar.attr('id'),true);
     }
 }
 
@@ -325,6 +333,9 @@ var scriptContext = [
 var groupContext = [
     {title: "New Group", cmd: "new", action: cardActions.newCard},
     {title: "Delete Group", cmd: "delete", action: cardActions.deleteCard},
+    {title: "---"},
+    {title: "View Schedules", cmd: "schedules", action: cardActions.schedules},
+
 ]
 
 var contextMenu = {
@@ -346,8 +357,14 @@ var contextMenu = {
                 tar = tar.parents(".page-tile");
             }      
             $(document).contextmenu("replaceMenu",groupContext);
-            if($(tar).hasClass("page-tile") || $(tar).parent('.page-tile')[0] ){ $(document).contextmenu("enableEntry","delete",true); }
-            else { $(document).contextmenu("enableEntry","delete",false); }
+            if($(tar).hasClass("page-tile") || $(tar).parent('.page-tile')[0] ){ 
+                $(document).contextmenu("enableEntry","delete",true); 
+                $(document).contextmenu("enableEntry","schedules",true);
+            }
+            else { 
+                $(document).contextmenu("enableEntry","delete",false); 
+                $(document).contextmenu("enableEntry","schedules",false); 
+            }
             return;
         }
         if($(event.currentTarget).hasClass("Scripts")){      
