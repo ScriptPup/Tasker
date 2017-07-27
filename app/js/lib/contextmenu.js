@@ -321,6 +321,84 @@ var cardActions = {
     }
 }
 
+var schedActions = {
+    newSchedule: function(event, ui){
+        require(['text!/js/lib/templates/new-schedule-template.html'],function(data){
+            var verifyNewSchedule = function(obj){       
+                if(obj.name == null || obj.name =="" || obj.name == "undefined"){ return "Name field cannot be blank. Please fill it in."; }
+                if(obj.access.length < 1){ return "At least one access group must be specified. Otherwise no one will be able to access this group!"; }
+                if(obj.note == null || obj.note == "" || obj.note == "undefined"){ return "Please put a brief description of the purpose of this script group in the note field."; }
+                return true;
+            }
+            var socket = $.grep(gSockets, function(e){ return e.nsp === "/home"; })[0];
+            loadCSS('/style/dialog-form.css');
+            data = $(data);
+            socket.emit('groups');
+            socket.on('groups',function(data){
+                $('#add-group').autocomplete({
+                    source: data,
+                    minLength: 0
+                });
+                $('#add-group').on('click',function(){
+                    $('#add-group').autocomplete( "search", "" );
+                });
+            });
+            $(data).find('#selected-groups').selectable({
+
+            });
+            $(data).find('#add-group-button').on('click',function(e){
+                var tarVal = $('#add-group').val();
+                if(tarVal !== null && tarVal !== 'undefined' && tarVal !== ""){
+                    $('<li>'+tarVal.toLowerCase()+'</li>').appendTo('#selected-groups');
+                    $('#add-group').val(null);                    
+                }
+            });
+            $(data).find('#remove-group').on('click',function(e){
+                $('.ui-selected').each(function(a,obj){
+                    $(obj).remove();
+                });
+            });
+            var dialog = $(data).dialog({
+                autoOpen: true,
+                height: 450,
+                width: 620,
+                modal: true,
+                buttons: {
+                    "Add": { 
+                        text: "Add",
+                        id: "New-Schedule",
+                        click: function(){
+                            $('#err-msg').empty();                          
+                            var dataz = {
+                                name: $('#name').val().replace(" ","_"),
+                                access: function(){ a = new Array(); $('#selected-groups li').each(function(o,obj){ a.push(obj.innerText); }); return a; }(),
+                                description: "<h3>" + $('#name').val() + "</h3>" + $('#description').val(),
+                                scriptList: function(){ a = new Array(); $('#selected li').each(function(o,obj){ a.push(obj.innerText); }); return a; }(),
+                                createdBy: muser.username
+                            }
+                            var ver = verifyNewSchedule(dataz);
+                            if(ver === true){
+                                socket.off('addScriptGroup');
+                                socket.on('addScriptGroup',function(res){
+                                    if(res==="Succesfully added ScriptGroup"){
+                                        dialog.dialog('close');
+                                    } else {
+                                        $('#err-msg').html(res);
+                                    }
+                                });
+                                socket.emit('addSchedule',dataz);
+                            }
+                            else { $('#err-msg').html(ver); }
+                        }
+                    },
+                    "Cancel": function(){ dialog.dialog('close'); }
+                },
+                close: function(){ $('#err-msg').empty(); }
+            });
+        });
+    }
+}
+
 var scriptContext = [
     {title: "New Script", cmd: "new", action: scriptActions.addScript},
     {title: "---"},
@@ -335,11 +413,14 @@ var groupContext = [
     {title: "Delete Group", cmd: "delete", action: cardActions.deleteCard},
     {title: "---"},
     {title: "View Schedules", cmd: "schedules", action: cardActions.schedules},
+]
 
+var schedContext = [
+    {title: "New Schedule", cmd: "new", action: schedActions.newSchedule}
 ]
 
 var contextMenu = {
-    delegate: ".script-tile, .page-tile, .ScriptGroups, .Scripts",
+    delegate: ".script-tile, .page-tile, .ScriptGroups, .Scripts, .schedules",
     trigger: "left",
     autoFocus: true,
     preventContextMenuForPopup: true,
@@ -386,6 +467,9 @@ var contextMenu = {
 
             }
             return;
+        }
+        if($(event.currentTarget).hasClass("schedules")){
+            $(document).contextmenu("replaceMenu",schedContext);
         }
         else { return; }
     }
